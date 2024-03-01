@@ -1,0 +1,33 @@
+.authLinks {
+    display: flex;
+    align-items: center;
+    column-gap: 1em;
+
+    cursor: pointer;
+}
+
+.username {
+    font-size: 2em;
+}
+
+.nonAuthLinks {
+    display: flex;
+    align-items: center;
+    column-gap: 30px;
+}
+
+.nonAuthLink {
+    font-size: 2em;
+    padding: 0.3em 0.75em;
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 5em;
+    aspect-ratio: 1 / 1;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}

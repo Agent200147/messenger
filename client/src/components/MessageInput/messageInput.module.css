@@ -1,0 +1,50 @@
+.inputWrapper {
+    display: flex;
+    align-items: center;
+
+    padding: 1.4em 2em;
+
+    border-top: 1px solid var(--border-color);
+}
+
+.inputWrapper input {
+    font-size: 2em;
+    flex-grow: 1;
+}
+
+.inputWrapper button {
+    height: 2.8em;
+}
+
+.inputWrapper button:disabled {
+    cursor: auto;
+}
+
+.inputWrapper svg {
+    width: 2.7em;
+    aspect-ratio: 1 / 1;
+
+    transform: scale(0.9);
+
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+}
+
+.inputWrapper svg path {
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    transition: all 0.1s linear;
+}
+
+.inputWrapper svg.active path {
+    fill: var(--main-color);
+    fill-opacity: 1;
+}
+
+.inputWrapper svg.active {
+    transform: scale(1);
+}
+

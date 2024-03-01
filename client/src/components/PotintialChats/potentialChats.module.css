@@ -1,0 +1,80 @@
+.potentialChatsWrapper {
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    flex-basis: 15%;
+    flex-shrink: 0;
+    padding: 1.4em;
+    border-left: 1px solid var(--border-color);
+
+}
+
+.potentialChat {
+    display: flex;
+    align-items: center;
+    /*padding: 1.5em 2em;*/
+    /*border-bottom: 1px solid var(--border-color);*/
+    /*cursor: pointer;*/
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 6em;
+    aspect-ratio: 1 / 1;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.chatMain {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1em 1.5em;
+    row-gap: 1em;
+}
+
+.user {
+    font-size: 1.7em;
+    font-weight: 500;
+    color: white;
+}
+
+.onlineStatus {
+    position: absolute;
+    top: 4.6em;
+    left: 4em;
+    width: 1.3em;
+    aspect-ratio: 1 / 1;
+    background: var(--main-color);
+    border-radius: 50%;
+    outline: 0.3em solid var(--black);
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+
+.writeBtn {
+    --writeBtn-ratio: 1.5;
+    font-size: 1.5em;
+    font-weight: 500;
+    padding: calc(0.4em / var(--writeBtn-ratio));
+    border-radius: calc(0.5em / var(--writeBtn-ratio));
+    color: var(--main-color);
+    outline: 1px solid var(--main-color);
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+
+.writeBtn:hover {
+    color: var(--black);
+    background: var(--main-color);
+}

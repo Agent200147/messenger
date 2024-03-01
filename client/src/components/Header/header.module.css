@@ -1,0 +1,17 @@
+.header {
+    font-size: 1rem;
+    width: 100%;
+    height: var(--header-height);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-inline: 3em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    font-size: 3.2em;
+    font-weight: 700;
+}

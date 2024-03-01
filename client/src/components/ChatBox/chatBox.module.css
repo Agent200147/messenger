@@ -1,0 +1,211 @@
+.wrapper {
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    /*flex-basis: 58%;*/
+    flex-grow: 1;
+    height: calc(100vh - var(--header-height));
+    border-right: 1px solid var(--border-color);
+
+    overflow-x: hidden;
+    /*overflow-y: auto;*/
+}
+
+.recipientInfo {
+    padding: 0.7em 2em;
+    display: flex;
+    align-items: center;
+    column-gap: 1.5em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 6em;
+    aspect-ratio: 1 / 1;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.recipient {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+}
+
+.recipientFullName {
+    font-size: 1.8em;
+    font-weight: 500;
+    color: white;
+}
+
+.lastOnline {
+    font-size: 1.6em;
+    font-weight: 400;
+    color: var(--gray)
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: flex-end;*/
+    overflow-x: hidden;
+    overflow-y: scroll;
+    row-gap: 1.5em;
+    flex-grow: 1;
+    padding: 1.5em 2em;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--main-color-dark) transparent;
+}
+
+.messagesWrapper {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: flex-end;*/
+    /*overflow-x: hidden;*/
+    /*overflow-y: scroll;*/
+    row-gap: 1.5em;
+    /*flex-grow: 1;*/
+    /*padding: 1.5em 2em;*/
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--main-color) transparent;
+}
+
+.messages::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    background-color: #f2bf93;
+    border-radius: 5px;
+
+}
+
+.messages::-webkit-scrollbar-button {
+    background-color: #f2bf93;
+}
+
+/*.selfMessage {*/
+/*    animation: fade-in2 0.2s linear forwards;*/
+/*}*/
+
+/*.otherMessage {*/
+/*    animation: fade-in 0.2s linear forwards;*/
+/*}*/
+
+.selfMessage, .otherMessage {
+    --message-ratio: 1.8;
+    position: relative;
+
+    font-size: 1.8em;
+    color: whitesmoke;
+
+    max-width: 40%;
+
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    row-gap: calc(0.5em / var(--message-ratio));
+    /*padding: calc(1.5em / var(--message-ratio)) calc(2em / var(--message-ratio));*/
+    padding: calc(1.3em / var(--message-ratio)) calc(1.7em / var(--message-ratio));
+    /*padding-bottom:  calc(4em / var(--message-ratio));*/
+    background: var(--bg-gray);
+    border-radius: calc(1em / var(--message-ratio));
+    animation: fade-in3 0.3s ease-in-out forwards;
+}
+
+.selfMessage {
+    align-self: flex-end;
+    /*flex-direction: row;*/
+    column-gap: calc(1.4em / var(--message-ratio));
+}
+
+.otherMessage {
+    align-self: flex-start;
+}
+
+.messageText {
+    position: relative;
+}
+
+.messageInfo {
+    /*position: absolute;*/
+    /*padding-top: 20px;*/
+    /*right: calc(1.7em / var(--message-ratio));*/
+    /*bottom: calc(1em / var(--message-ratio));*/
+    /*margin-top: calc(0.8em / var(--message-ratio));*/
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    column-gap: calc(0.9em / var(--message-ratio));
+}
+
+.selfMessage .messageInfo {
+    justify-content: flex-end;
+}
+
+.otherMessage .messageInfo {
+    justify-content: flex-start;
+}
+
+
+.readCheckMarkWrapper {
+    display: flex;
+}
+
+.readCheckMarkWrapper svg{
+    width: calc(2.5em / var(--message-ratio));
+}
+
+.messageTime {
+    font-size: calc(1.4em / var(--message-ratio));
+    color: var(--gray);
+}
+
+.unReadMessage {
+    background: var(--main-color-dark);
+}
+
+@keyframes fade-in {
+    0% {
+        transform: translateX(-2em);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in2 {
+    0% {
+        transform: translateX(2em);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in3 {
+    0% {
+        /*transform: scale(0.95);*/
+        transform: translateY(0.5em);
+        opacity: 0;
+    }
+    100% {
+        /*transform: scale(1);*/
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

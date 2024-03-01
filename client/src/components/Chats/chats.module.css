@@ -1,0 +1,7 @@
+.wrapper {
+    font-size: 1rem;
+    flex-basis: 22%;
+    flex-shrink: 0;
+
+    border-right: 1px solid var(--border-color);
+}

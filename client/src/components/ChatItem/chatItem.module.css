@@ -1,0 +1,206 @@
+.skeleton {
+    animation: skeleton-loading 0.5s ease-in-out infinite alternate;
+}
+
+.chatItem, .chatItem__skeleton {
+    display: flex;
+    align-items: center;
+    padding: 1.5em 2em;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+.chatItem {
+    /*animation: fade-in 0.3s linear forwards;*/
+}
+
+.chatItemActive {
+    background: var(--main-color-dark);
+}
+
+.chatItem__skeleton {
+    height: 9.7em;
+}
+
+@keyframes skeleton-loading {
+    /*0% {*/
+    /*    background-color: hsl(200, 20%, 80%);*/
+    /*}*/
+    /*100% {*/
+    /*    background-color: hsl(200, 20%, 95%);*/
+    /*}*/
+
+    0% {
+        background-color: rgba(147, 147, 147, 0.3);
+    }
+    100% {
+        background-color: rgba(206, 206, 206, 0.3);
+    }
+}
+
+@keyframes fade-in {
+    /*0% {*/
+    /*    background-color: hsl(200, 20%, 80%);*/
+    /*}*/
+    /*100% {*/
+    /*    background-color: hsl(200, 20%, 95%);*/
+    /*}*/
+
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.avatar, .avatar__skeleton {
+    border-radius: 50%;
+    max-width: 6em;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 6em;
+    aspect-ratio: 1 / 1;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.avatar__skeleton {
+    width: 6em;
+}
+
+.onlineStatus, .onlineStatusActive {
+    position: absolute;
+    top: 4.6em;
+    left: 4em;
+    width: 1.3em;
+    aspect-ratio: 1 / 1;
+    background: var(--main-color);
+    border-radius: 50%;
+    outline: 0.3em solid var(--black);
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+
+.onlineStatusActive {
+    outline: 0.3em solid var(--main-color-dark);
+}
+
+.chatMain, .chatMain__skeleton{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1em 1.5em;
+    row-gap: 0.5em;
+}
+
+.chatMain__skeleton {
+    flex-grow: 1;
+    height: 4.6em;
+    margin: 1em 1.5em;
+    padding: 0;
+
+    row-gap: 0.9em;
+    border-radius: 0.7em;
+}
+
+.recipientUser {
+    font-size: 1.8em;
+    font-weight: 500;
+    color: white;
+}
+
+.recipientUser__skeleton {
+    height: 2em;
+    border-radius: 0.3em;
+}
+
+.firstMessage {
+    font-size: 1.5em;
+    color: var(--main-color);
+}
+
+.lastMessage {
+    display: flex;
+    column-gap: 0.4em;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: var(--gray);
+}
+
+.messageText {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.lastMessage__skeleton {
+    height: 1.9em;
+    border-radius: 0.3em;
+}
+
+.notification, .notification__skeleton {
+    --notification-ratio: 1.6;
+    font-size: 1.6em;
+    font-weight: 500;
+
+    color: var(--black);
+
+    width: calc(2.8em / var(--notification-ratio));
+    aspect-ratio: 1 / 1;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: var(--main-color);
+}
+
+.notification__skeleton {
+    margin-left: auto;
+}
+
+.readCheckMarkWrapper, .notReadCheckMarkWrapper {
+    height: 1.6em;
+    flex-shrink: 0;
+}
+
+.readCheckMarkWrapper {
+    aspect-ratio: 29 / 16;
+}
+
+.notReadCheckMarkWrapper {
+    aspect-ratio: 19 / 16;
+}
+
+.readCheckMarkWrapper {
+    color: var(--main-color);
+}
+
+.notReadCheckMarkWrapper {
+    color: gray;
+}
+
+.yourMessage {
+    color: white;
+    font-weight: 500;
+}

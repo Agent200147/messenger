@@ -1,0 +1,155 @@
+.profilePageWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    font-size: 1rem;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatarWrapperMain {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33em;
+    aspect-ratio: 1 / 1;
+}
+
+.form {
+    overflow: hidden;
+}
+
+.form input {
+    display: none;
+}
+
+.uploadForm {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    opacity: 0;
+    background: rgba(0 ,0, 0, 0.7);
+
+    /*padding-inline: 30px;*/
+    border-radius: 50%;
+    z-index: 1;
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.2s linear;
+}
+
+.uploadFormWithPreview {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /*opacity: 0;*/
+
+    border-radius: 50%;
+    z-index: 1;
+
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+}
+
+.avatarWrapperMain:hover .uploadForm {
+    opacity: 1;
+}
+
+.avatarWrapperMain:hover .uploadBtnWrapper {
+    /*transform: translateY(0);*/
+}
+
+.uploadSvgWrapper {
+    width: 10em;
+    color: var(--main-color);
+}
+
+.uploadBtnWrapper {
+    width: 100%;
+    padding: 1.3em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 5em;
+    /*transform: translateY(6.4em);*/
+    background: rgba(0 ,0, 0, 0.7);
+
+    cursor: pointer;
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+
+.uploadBtn {
+    aspect-ratio: 19 / 16;
+    height: 3.7em;
+    padding: 0.6em;
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+.cancelBtn {
+    aspect-ratio: 1 / 1;
+    height: 3.7em;
+    padding: 0.6em;
+    color: var(--red);
+    cursor: pointer;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    margin-top: 10em;
+    column-gap: 2em;
+}
+
+.userinfo {
+    --userinfo-ratio: 2.4;
+    font-size: 2.4em;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.4em;
+}
+
+.userinfo > div {
+    display: flex;
+    column-gap: calc(1em / var(--userinfo-ratio));
+}
+
+.colored {
+    color: var(--main-color);
+}
+
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+

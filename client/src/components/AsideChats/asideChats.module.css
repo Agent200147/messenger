@@ -1,0 +1,5 @@
+.asideChatsWrapper {
+    font-size: 1rem;
+    flex-basis: 22%;
+    border-right: 1px solid var(--border-color);
+}
