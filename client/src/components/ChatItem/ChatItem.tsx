@@ -17,6 +17,7 @@ import cn from "classnames";
 import {selectCurrentChat, selectOnlineUsers, setCurrentChat, setLastMessage} from "@/store/slices/chatSlice";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
 import {setNewMessage} from "@/store/slices/messageSlice";
+import {Routes} from "@/Routes/routes";
 
 type ChatItemProps = {
     chat: ChatTypeWithFullInfo,
@@ -35,13 +36,13 @@ const ChatItem: FC<ChatItemProps> = ({ chat, isActiveChat }) => {
     useLayoutEffect(() => {
         if (isActiveChat) {
             dispatch(setCurrentChat(chat))
-            dispatch(setNewMessage({}))
+            dispatch(setNewMessage(null))
         }
     }, [isActiveChat])
 
     return (
         // <Link href={`?chatId=${chat.id}`}  className={cn([styles.chatItem, isActiveChat && styles.chatItemActive]) } >
-        <Link href={`/chats/${chat.chatId}`} className={cn([styles.chatItem, isActiveChat && styles.chatItemActive])}>
+        <Link href={`${Routes.CHATS}/${chat.chatId}`} className={cn([styles.chatItem, isActiveChat && styles.chatItemActive])}>
             <div className={styles.avatarWrapper}>
                 <Image fill className={styles.avatar} src={ recipient.avatar ? `http://localhost:8000/${recipient.avatar}` : avatarImg}
                        alt={'Аватарка'}/>

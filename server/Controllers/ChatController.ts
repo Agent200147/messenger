@@ -106,6 +106,8 @@ export const findChat = async (req, res) => {
 
 export const findUserChatsAndRecipients = async (req, res) => {
     const userId = req.params.userId
+    console.log('---------------')
+
     try {
         // const chats = await chatModel.findAll({where: {members: {[Op.like]: '%' + userId + '%'}}})
 
@@ -166,7 +168,7 @@ export const findUserChatsAndRecipients = async (req, res) => {
         res.status(200).json(result)
     } catch (error) {
         console.log(error)
-        res.status(500).json(error)
+        res.status(500).json()
     }
 }
 

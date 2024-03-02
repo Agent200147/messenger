@@ -1,5 +1,6 @@
 import type { UserInChatType } from "@/Models/User/userModel";
 import type { MessageType } from "@/Models/Message/messageModel";
+import {Nullable} from "@/utils/typeUtils";
 
 // export type ChatType = {
 //     id: number,
@@ -17,5 +18,5 @@ export type ChatTypeWithFullInfo =  {
         unReadMessages: number,
         user: UserInChatType
     },
-    lastMessage: MessageType
+    lastMessage: Nullable<MessageType>
 }

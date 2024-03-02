@@ -1,29 +1,33 @@
 // "use client";
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice, Draft} from "@reduxjs/toolkit";
 import { chatApi } from "@/api/chats/chatsApi";
 import { messagesApi } from "@/api/messages/messgesApi";
 import type { RootState } from "@/store/store";
 import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
 import type { UserType } from "@/Models/User/userModel";
 import type { NotificationType } from "@/Models/Notification/notificationModel";
+import type {Nullable} from "@/utils/typeUtils";
+
+
+
 
 interface InitialState {
     chats: ChatTypeWithFullInfo[];
-    currentChat: ChatTypeWithFullInfo,
-    newChat: ChatTypeWithFullInfo,
+    currentChat: Nullable<ChatTypeWithFullInfo>,
+    newChat: Nullable<ChatTypeWithFullInfo>,
     onlineUsers: number[],
     notifications: NotificationType[],
 }
 
 const initialState: InitialState = {
     chats: [],
-    currentChat: {} as ChatTypeWithFullInfo,
-    newChat: {} as ChatTypeWithFullInfo,
+    currentChat: null,
+    newChat: null,
     onlineUsers: [],
     notifications: [],
 };
 
-const findChatById = (state, chatId) => state.chats.find(chat => chat.chatId === chatId);
+const findChatById = (state:  Draft<InitialState>, chatId: number) => state.chats?.find(chat => chat.chatId === chatId)
 
 
 const slice = createSlice({
@@ -79,14 +83,14 @@ const slice = createSlice({
             const chat = findChatById(state, action.payload)
             if (!chat) return
             chat.unReadMessages = 0
-            if (chat.chatId === state.currentChat.chatId)
-                state.currentChat.unReadMessages = 0
+            if (chat.chatId === state.currentChat?.chatId)
+                state.currentChat && (state.currentChat.unReadMessages = 0)
         },
 
 
-        addUnreadMessageToCurrentChat: (state, action) => {
-            state.currentChat.unReadMessages++
-            const chat = state.chats.find(chat => chat.chatId ===  state.currentChat.chatId)
+        addUnreadMessageToCurrentChat: (state, _) => {
+            state.currentChat && state.currentChat.unReadMessages++
+            const chat = state.chats.find(chat => chat.chatId === state.currentChat?.chatId)
             if (!chat) return
             chat.unReadMessages++
         },
@@ -104,7 +108,7 @@ const slice = createSlice({
             })
 
             .addMatcher(messagesApi.endpoints.sendMessage.matchFulfilled, (state, action) => {
-                const chatToRefresh = state.chats.find(chat => chat.chatId === action.payload.chatId)
+                const chatToRefresh = findChatById(state, action.payload.chatId)
                 if(chatToRefresh) chatToRefresh.lastMessage = action.payload
             })
     },

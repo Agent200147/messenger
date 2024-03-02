@@ -20,11 +20,15 @@ export default async function PrivateLayout({children}: Readonly<{ children: Rea
     //     </PrivateProvider>
     // )
 
-    const isAuth = await getIsAuth()
-
-    if (!isAuth) {
-        return redirect('/login')
-    }
+    // const isAuth = await getIsAuth()
+    // console.log('isAuth', isAuth)
+    // if (!isAuth) {
+    //     return redirect('/login')
+    // }
+    // if (isAuth?.serverError)
+    //     return <main className={styles.mainWrapper}>
+    //         Server error
+    //     </main>
 
     return (
         <main className={styles.mainWrapper}>

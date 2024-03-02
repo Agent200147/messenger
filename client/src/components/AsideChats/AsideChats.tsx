@@ -8,7 +8,7 @@ import { useGetChatsMutation } from "@/api/chats/chatsApi";
 import {selectUserChats, setChats} from "@/store/slices/chatSlice";
 import avatarImg from '@/public/img/avatar.svg'
 import Chats from "@/components/Chats/Chats";
-import {getAuthCookie, getUserChats, getUserFromCookies} from "../../utils";
+import {getAuthCookie, getUserChats, getUserFromCookies} from "@/utils";
 import {store} from "@/store/store";
 // import {getUserChats} from "@/app/utils";
 

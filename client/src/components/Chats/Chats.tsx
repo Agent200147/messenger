@@ -40,7 +40,7 @@ const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
     }, [userChatsStore]);
 
     useEffect(() => {
-        if (!currentChatId) dispatch(setCurrentChat({}))
+        if (!currentChatId) dispatch(setCurrentChat(null))
     }, [dispatch, currentChatId]);
 
     const handleSearchInput = (value: string) => {

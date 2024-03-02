@@ -1,11 +1,13 @@
 import { FC } from 'react';
-import {getUserPotentialChats} from "@/utils";
+import {getUserChats, getUserPotentialChats} from "@/utils";
 import PotentialChats from "@/components/PotintialChats/PotentialChats";
 
 const PotentialChatsServer: FC = async () => {
     const potentialChats = await getUserPotentialChats()
+    const userChats = await getUserChats()
+    // const userChats2 = await getUserChats()
     return (
-        <PotentialChats potentialChats={potentialChats}/>
+        <PotentialChats userChats={userChats} potentialChats={potentialChats}/>
     );
 };
 

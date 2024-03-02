@@ -7,9 +7,10 @@ import {useRouter} from "next/navigation";
 import Image from "next/image";
 import {getUserFromCookies} from "@/utils";
 import ProfilePage from "@/app/(private)/profile/ProfilePage";
+import {AuthenticatedUserType} from "@/Models/User/userModel";
 
 const Page = () => {
-    const user = getUserFromCookies()
+    const user = getUserFromCookies() as AuthenticatedUserType
 
     return (
         <>

@@ -22,8 +22,8 @@ const Nav = ({ user }: { user: AuthenticatedUserType | undefined  }) => {
     return (
         <>
             {
-                user || !isEmpty(userFromStore)
-                    ? <AuthLinks user={isEmpty(userFromStore) ? user as AuthenticatedUserType : userFromStore}/>
+                user || userFromStore
+                    ? <AuthLinks user={!userFromStore ? user as AuthenticatedUserType : userFromStore}/>
                     : <NonAuthLinks/>
             }
         </>

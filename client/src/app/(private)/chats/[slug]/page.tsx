@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "../../../page.module.css";
 import {useSelector} from "react-redux";
 import {selectUser} from "@/store/slices/authSlice";
-import {useRouter, useSearchParams} from "next/navigation";
+import {redirect, useRouter, useSearchParams} from "next/navigation";
 // import {useEffect} from "react";
 import AsideChats from "@/components/AsideChats/AsideChats";
 import ChatBox from "@/components/ChatBox/ChatBox";
@@ -21,19 +21,10 @@ export default async function Home({ params } : {
 }) {
 
     const chatId = params.slug
-    // if(!chatId)
+    if (!(/^\d+$/.test(chatId))) redirect('/')
     const serverSideMessagesAndRecipient = await getChatMessagesAndRecipient(chatId)
-    // console.log('rrrrrrr: ', user)
-
-
-    // console.log(result)
-    // console.log(serverSideMessages)
-
-    // console.log(serverSideMessages)
-
-    // const userChats = await getUserChats()
-    // const chatMessages = await getChatMessages(chatId as string)
-    // const currentChat = userChats.find(chat => chat.id === Number(chatId)) || null
+    if (!serverSideMessagesAndRecipient)
+        redirect('/')
     return (
         <>
             {/*<Chats preloadedChats={userChats}/>*/}

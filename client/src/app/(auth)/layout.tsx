@@ -13,8 +13,8 @@ export default async function PublicLayout({children}: Readonly<{ children: Reac
     //     <PublicProvider>
     //         {children}
     //     </PublicProvider>
-    // )
-    const isAuth = await getIsAuth()
-    if (isAuth) redirect('/')
+    // // )
+    // const isAuth = await getIsAuth()
+    // if (isAuth) redirect('/')
     return <>{children}</>
 }

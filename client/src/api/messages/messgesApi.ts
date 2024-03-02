@@ -10,7 +10,7 @@ export const messagesApi = api.injectEndpoints({
             })
         }),
 
-        getAdditionalMessages: builder.mutation<MessageType[], number>({
+        getAdditionalMessages: builder.mutation<MessageType[], { chatId: number, limit: number, offset: number }>({
             query: ({ chatId, limit, offset }) => ({
                 url: `/messages/additional/${chatId}`,
                 method: "GET",

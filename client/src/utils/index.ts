@@ -1,41 +1,49 @@
 // 'use server';
 import {cookies} from "next/headers";
-import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
-import {deleteUserCookies} from "@/app/actions";
+import type {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
+import {AuthenticatedUserType, UserInChatType} from "@/Models/User/userModel";
 import jwt from 'jsonwebtoken'
-import {isEmpty} from "@/utils/ClientServices";
+import {MessageType} from "@/Models/Message/messageModel";
 
-export async function getIsAuth() {
+
+type FetchFailedType = {
+    error: boolean
+}
+
+type AuthResponseType =  {
+    message: string
+}
+
+type ChatMessagesAndRecipientType = {
+    unReadMessages: number,
+    messages:MessageType[],
+    recipients: UserInChatType[]
+} | null
+const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType | undefined> => {
     const authCookie = cookies().get('auth')?.value
     if (!authCookie) return
-    // const resultCookies = encodeURIComponent(authCookie)
-
     try {
-        const response = await fetch('http://localhost:8000/api/users/checkAuth', {
-            method: 'GET',
+        const response = await fetch(`${process.env.API_URL + url}`, {
+            method,
             headers: {
                 Accept: 'application/json',
                 Cookie: `auth=${authCookie};`
             },
-            // credentials: 'include',
         })
-        // console.log('response', response)
-        const result = await response.json()
-        return result.message === 'Ок'
-    } catch (e) {
-        return false
-    }
+       if (!response.ok)
+           return
 
-    // console.log('result ', result)
-    // if (result.message !== 'Ок') {
-    //     const response = await fetch('http://localhost:3000/api/cookie', {
-    //         method: 'POST'
-    //     })
-    //     const result = await response.json()
-    //     return false
-    // }
-    // return false
+        const result = await response.json()
+        return result
+    } catch (error) {
+        return { error: true }
+    }
+}
+export async function getIsAuth() {
+    const response = await myFetch<AuthResponseType>('/users/checkAuth', 'GET')
+    if (!response) return false
+    if ('error' in response)  return response
+    if ('message' in response)  return response?.message === 'Ок'
 }
 
 export function getAuthCookie() {
@@ -56,42 +64,14 @@ export function getUserFromCookies(): AuthenticatedUserType | undefined {
     }
 }
 
-export async function getUserChats(): Promise<ChatTypeWithFullInfo[] | undefined> {
-    const authCookie = getAuthCookie()
+export async function getUserChats() {
     const user = getUserFromCookies()
-    // console.log(authCookie, user)
-    if(!authCookie || !user) return
-    // console.log('rrrrrrr: ', user)
-    const response = await fetch(`http://localhost:8000/api/chats/${user.id}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            Cookie: `auth=${authCookie};`
-        },
-        cache: 'no-store'
-        // credentials: 'include',
-    })
-    // console.log(result)
-    return await response.json()
+    if(!user) return
+    return await myFetch<ChatTypeWithFullInfo[]>(`/chats/${user.id}`, 'GET')
 }
 
-export async function getUserPotentialChats(): Promise<ChatTypeWithFullInfo[] | undefined> {
-    const authCookie = getAuthCookie()
-    console.log('getUserPotentialChats')
-    // const user = getUserFromCookies()
-    // console.log(authCookie, user)
-    if(!authCookie) return
-    const response = await fetch(`http://localhost:8000/api/chats/potential`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            Cookie: `auth=${authCookie};`
-        },
-        cache: 'no-store'
-        // credentials: 'include',
-    })
-    // console.log(result)
-    return await response.json()
+export async function getUserPotentialChats() {
+    return await myFetch<ChatTypeWithFullInfo[]>('/chats/potential', 'GET')
 }
 
 // export async function getChatMessages(chatId) {
@@ -112,19 +92,5 @@ export async function getUserPotentialChats(): Promise<ChatTypeWithFullInfo[] | 
 
 
 export async function getChatMessagesAndRecipient(chatId: string) {
-    const authCookie = getAuthCookie()
-
-    // console.log('rrrrrrr: ', user)
-    const response = await fetch(`http://localhost:8000/api/messages/${chatId}`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            Cookie: `auth=${authCookie};`
-        },
-        // cache: 'no-store'
-        credentials: 'include',
-    })
-    const result = await response.json()
-
-    return result
+    return await myFetch<ChatMessagesAndRecipientType>(`/messages/${chatId}`, 'GET')
 }

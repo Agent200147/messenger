@@ -2,16 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import { authApi } from "@/api/auth/authApi";
 import { RootState } from "@/store/store";
 import {AuthenticatedUserType, UserType} from "@/Models/User/userModel";
+import {Nullable} from "@/utils/typeUtils";
 
 
 
 interface InitialState {
-    user: AuthenticatedUserType;
+    user: Nullable<AuthenticatedUserType>;
     isAuthenticated: boolean;
 }
 
 const initialState: InitialState = {
-    user: {} as AuthenticatedUserType,
+    user: null,
     isAuthenticated: false,
 };
 

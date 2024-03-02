@@ -28,72 +28,42 @@ import useCustomObserver from "@/hooks/useCustomObserver";
 type CurrentChatProps = {
     currentChatId: string,
     serverSideMessagesAndRecipient: {
-        messages:MessageType[],
+        unReadMessages: number,
+        messages: MessageType[],
         recipients: UserInChatType[]
     }
 }
 const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRecipient }) => {
-    const dispatch = useDispatch()
-    const { unReadMessages: unReadMessagesServer, messages: messagesFromServer, recipients } = serverSideMessagesAndRecipient
+    const { unReadMessages: unReadMessagesFromServer, messages: messagesFromServer, recipients } = serverSideMessagesAndRecipient
     const recipient = recipients[0]
-    const currentChat = useSelector(selectCurrentChat)
-    const { unReadMessages: unReadMessagesStore } = currentChat
 
-    // console.log(currentChat)
-    // console.log(recipient)
-    // console.log(serverSideMessages)
-    // const userChats = useSelector(selectUserChats)
-    // const currentChatId = Number(params.get('chatId'))
-    // const userChatsStore = useSelector(selectUserChats)
-    // const currentChat = userChatsStore?.find(chat => chat.chatId === currentChatId)
+    const dispatch = useDispatch()
+    const currentChat = useSelector(selectCurrentChat)
     const messagesStore = useSelector(selectMessages)
     const newMessage = useSelector(selectNewMessage)
-    const firstMessageRef = useRef<HTMLDivElement>(null)
-    const scrollRef = useRef<HTMLDivElement>(null)
-    const scrollRefContainer = useRef<HTMLDivElement>(null)
     const scrollSmoothFlag = useSelector(selectMessagesScrollSmoothFlag)
-    // const [messages, setMessages] = useState(messagesFromServer)
-    const [getAdditionalMessagesMutation] = useGetAdditionalMessagesMutation()
-    const offset = useRef(20)
-    const [hasAdditionalMessages, setHasAdditionalMessages] = useState(true);
-    const [additionalMessages, setAdditionalMessages] = useState()
-    // const currentChat = userChats?.find(chat => chat.id === currentChatId)
 
-    const messages = messagesStore?.length ? messagesStore : messagesFromServer
-    const unReadMessages = unReadMessagesStore ? unReadMessagesStore : unReadMessagesServer
-    // const messages = chatMessages
+    const unReadMessagesStore = currentChat?.unReadMessages
+
+    const [hasAdditionalMessages, setHasAdditionalMessages] = useState(true);
+    const [additionalMessages, setAdditionalMessages] = useState<MessageType[]>()
+
+    const [getAdditionalMessagesMutation] = useGetAdditionalMessagesMutation()
+
+    const firstMessageRef = useRef<HTMLDivElement>(null)
+    const lastMessageRef = useRef<HTMLDivElement>(null)
+    const scrollRefContainer = useRef<HTMLDivElement>(null)
+    const offset = useRef(20)
     const prevMessageStore = useRef(20)
 
-    // useEffect(() => {
-    //     // getMessagesMutation(currentChatId)
-    // }, [currentChatId])
-
-    useEffect(() => {
-        dispatch(setMessages(messagesFromServer))
-
-        scrollRef.current?.scrollIntoView({ behavior: "instant" })
-        console.log('scrollIntoView')
-        // if(!isEmpty(newMessage)) return
-        // if (isEmpty(additionalMessages)) scrollRef.current?.scrollIntoView({ behavior: "instant" })
-    }, [currentChatId])
-
-    useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [scrollSmoothFlag])
-
+    const messages = messagesStore?.length ? messagesStore : messagesFromServer
+    const unReadMessages = unReadMessagesStore || unReadMessagesFromServer
 
     useCustomObserver(firstMessageRef,  async () => {
         if (!hasAdditionalMessages) {
             return
         }
-        const currentScrollPosition = scrollRefContainer.current.scrollTop;
-        // console.log(scrollRefContainer.current.scrollTop)
-        // console.log(firstMessageRef.current.offsetTop, scrollRef.current.offsetTop)
-        // scrollRef.current.offsetTop = 500
-        // scrollRef.current.scrollIntoView()
-        // console.log(initialScrollHeight)
-        // firstMessageRef.current?.scrollIntoView({ behavior: "instant" })
-        const response = await getAdditionalMessagesMutation({chatId: currentChatId, limit: 20, offset: offset.current}).unwrap()
+        const response = await getAdditionalMessagesMutation({chatId: Number(currentChatId), limit: 20, offset: offset.current}).unwrap()
         setAdditionalMessages(response)
 
         if (isEmpty(response)) {
@@ -103,52 +73,29 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     })
 
     useEffect(() => {
+        dispatch(setMessages(messagesFromServer))
 
-        // console.log(scrollRef.current.offsetTop, scrollRefContainer.current.scrollTop)
-        // console.log(scrollRefContainer.current.scrollTop)
-        // console.log(scrollRefContainer.current.scrollHeight)
+        lastMessageRef.current?.scrollIntoView({ behavior: "instant" })
+        console.log('scrollIntoView')
+    }, [currentChatId])
 
-        if (isEmpty(additionalMessages)) return
-        // console.log(additionalMessages?.length)
-        // console.log((scrollRefContainer.current.scrollHeight / messagesStore.length), firstMessageRef.current.scrollHeight)
-        // scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollTop + firstMessageRef.current.scrollHeight * 20
+
+    useEffect(() => {
+        if (!additionalMessages || !scrollRefContainer.current) return
         scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollTop + (scrollRefContainer.current.scrollHeight / messagesStore.length) * ( messagesStore.length - (prevMessageStore.current))
-        console.log('длина',  messagesStore.length - (prevMessageStore.current))
-        // scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollHeight - (scrollRefContainer.current.scrollHeight / messagesStore.length) * 20
-        // scrollRefContainer.current.scrollTop = 1500
+        console.log('длина',  messagesStore.length , (prevMessageStore.current))
         prevMessageStore.current = messagesStore.length
-
     }, [messagesStore]);
 
     useEffect(() => {
-        if (isEmpty(newMessage)) return
-        prevMessageStore.current = prevMessageStore.current + 1
+        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+
+        if(!newMessage) return
+        prevMessageStore.current++
         offset.current++
-    }, [newMessage]);
-
-    // useCustomObserver(firstMessageRef, () => {
-    //     if (!hasAdditionalMessages) {
-    //         return
-    //     }
-    //     const currentScrollPos = scrollRef.current ? firstMessageRef.current.offsetTop : 0;
-    //     const currentScrollHeight = scrollRefContainer.current.scrollHeight;
-    //
-    //     getAdditionalMessagesMutation({ chatId: currentChatId, limit: 20, offset: offset.current })
-    //         .then((data) => {
-    //             const newScrollHeight = scrollRefContainer.current.scrollHeight;
-    //             const scrollDifference = newScrollHeight - currentScrollHeight;
-    //             if (scrollDifference > 0) {
-    //                 scrollRefContainer.current.scrollTop = currentScrollPos + scrollDifference;
-    //             } else {
-    //                 scrollRefContainer.current.scrollTop = currentScrollPos;
-    //             }
-    //             if (isEmpty(data?.data)) {
-    //                 setHasAdditionalMessages(false)
-    //             }
-    //         });
-    //     offset.current = offset.current + 20;
-    // });
-
+        console.log('scrollSmoothFlag')
+        console.log(prevMessageStore.current, offset.current)
+    }, [scrollSmoothFlag]);
 
     return (
         <div className={styles.wrapper}>
@@ -169,10 +116,10 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
             <div className={styles.messages} ref={scrollRefContainer}>
                 <div className={styles.messagesWrapper}>
                     {messages?.map((msg, index) => {
+                        const { id, senderId, text, createdAt } = msg;
                         const messageNumberReverse = messages.length - (index + 1)
-                        const selfMessage = msg.senderId !== recipient.id
-                        const { id, text, createdAt } = msg;
-                        const ref = index === messages.length - 1 ? scrollRef : (index === 5 ? firstMessageRef : null)
+                        const selfMessage = senderId !== recipient.id
+                        const ref = index === messages.length - 1 ? lastMessageRef : (index === 5 ? firstMessageRef : null)
                         return (
                             <div key={id}
                                  ref={ref}

@@ -30,8 +30,10 @@ export const getChatMessagesAndRecipient = async (req, res) => {
                 chatId
             }
         })
+        console.log(user_chat)
+
         if (!user_chat) {
-            res.status(400).json({ message: 'Чат не найден' })
+            return res.status(400).json({ message: 'Чат не найден' })
         }
         const chat = await ChatModel.findOne( {
             attributes: {exclude: ['createdAt', 'user_chats']},
@@ -65,6 +67,9 @@ export const getChatMessagesAndRecipient = async (req, res) => {
                 },
             ],
         })
+
+        if (!chat)
+            return res.status(400).json({ message: 'Чат не найден' })
 
         // const result = await User_ChatModel.findOne({
         //     where: {

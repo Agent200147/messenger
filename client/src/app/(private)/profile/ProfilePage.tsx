@@ -23,7 +23,7 @@ import {revalidatePath} from "next/cache";
 
 type ProfilePageProps = {
     user: AuthenticatedUserType,
-    cancelHandler: React.MouseEventHandler<HTMLButtonElement> | undefined
+    // cancelHandler: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 
 const ProfilePage: FC<ProfilePageProps> = ({ user }) => {
@@ -31,7 +31,7 @@ const ProfilePage: FC<ProfilePageProps> = ({ user }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter()
     const [selectedFile, setSelectedFile] = useState<File>();
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>('');
     const [error, setError] = useState('');
 
     const [ upload ] = useUploadAvatarMutation()

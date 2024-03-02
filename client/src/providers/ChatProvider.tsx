@@ -46,7 +46,7 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
     onlineUsersRef.current = onlineUsers
     // console.log('onlineUsersRef', onlineUsersRef)
     // const { slug: currentChatId } = params
-    const currentChatId = currentChat.chatId
+    const currentChatId = currentChat?.chatId
     // console.log(currentChatId)
     // const [getChats] = useGetChatsMutation()
     //
@@ -81,9 +81,10 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
 
 
     useEffect(() => {
-        if (isEmpty(user) || !socket || isEmpty(currentChat)) return
+        // console.log(currentChat)
+
+        if (!user || !socket || !currentChat || !newMessage) return
         const recipient = currentChat?.recipientInfo.user
-        if(isEmpty(newMessage)) return
         socket.emit('send-message', {message: newMessage, recipient})
         dispatch(addUnreadMessageToCurrentChat(null))
         // console.log({message: newMessage, recipient})
@@ -92,7 +93,7 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
 
 
     useEffect(() => {
-        if (isEmpty(user) || !socket) {
+        if (!user || !socket) {
             return
         }
 
@@ -122,7 +123,6 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
             dispatch(setLastMessage(message))
 
             if (currentChatId != message.chatId) {
-                console.log(currentChatId, currentChatId)
                 console.log('true')
                 // console.log('НЕ РАВНО')
                 dispatch(addUnreadMessageToRecipient(Number(message.chatId)))
@@ -208,7 +208,7 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
 
 
     useEffect(() => {
-        if (isEmpty(newChat) || !socket) return
+        if (!newChat || !socket) return
         const recipientId = newChat?.recipientInfo.user.id
         const updatedChat = { ...newChat, recipientInfo: { ...newChat.recipientInfo, user: user } }
         // chat.recipientInfo.user = user

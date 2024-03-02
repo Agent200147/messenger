@@ -12,16 +12,20 @@ import CustomToast from "@/components/CustomToast/CustomToast";
 import {selectUser} from "@/store/slices/authSlice";
 import {useEffect, useLayoutEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-const PotentialChats = ({ potentialChats }) => {
+const PotentialChats = ({ userChats, potentialChats }) => {
     const user = useSelector(selectUser)
     const router = useRouter()
-    const userChats = useSelector(selectUserChats)
-    const [filteredPotentialChats, setFilteredPotentialChats] = useState(null)
-    useLayoutEffect(() => {
-        const existingUserIds = new Set(userChats?.map(userChat => userChat.recipientInfo.user.id))
-        setFilteredPotentialChats(potentialChats.filter(user => !existingUserIds.has(user.id)))
-    }, [userChats])
+    // const userChats = useSelector(selectUserChats)
 
+    // const [filteredPotentialChats, setFilteredPotentialChats] = useState(null)
+
+    // useLayoutEffect(() => {
+    //     const existingUserIds = new Set(userChats?.map(userChat => userChat.recipientInfo.user.id))
+    //     setFilteredPotentialChats(potentialChats.filter(user => !existingUserIds.has(user.id)))
+    // }, [userChats])
+    const existingUserIds = new Set(userChats?.map(userChat => userChat.recipientInfo.user.id))
+    // setFilteredPotentialChats(potentialChats.filter(user => !existingUserIds.has(user.id)))
+    const filteredPotentialChats = potentialChats.filter(user => !existingUserIds.has(user.id))
     const onlineUsers = useSelector(selectOnlineUsers)
     const [ createChat ] = useCreateChatMutation()
     const createNewChat = async (recipientId: number ) => {
@@ -30,7 +34,7 @@ const PotentialChats = ({ potentialChats }) => {
             // console.log(response)
             router.push(`/chats/${response.chatId}`)
             // toast.success(<CustomToast text="Фото профиля успешно обновлено" />)
-        } catch (error) {
+        } catch (error: any) {
             // console.log(error?.data)
             toast.error(<CustomToast text={error?.data?.message || 'Непредвиденная ошибка'} />)
             // setError(error?.message || 'Непредвиденная ошибка')
@@ -42,7 +46,7 @@ const PotentialChats = ({ potentialChats }) => {
                     ? filteredPotentialChats?.map(potentialUser => {
                         const isOnlineUser = onlineUsers.find(userId => userId === potentialUser.id)
                         return (
-                            <div className={styles.potentialChat}>
+                            <div className={styles.potentialChat} key={potentialUser?.id}>
                                 <div className={styles.avatarWrapper}>
                                     <Image fill className={styles.avatar}
                                            src={potentialUser.avatar ? `http://localhost:8000/${potentialUser.avatar}` : avatarImg}

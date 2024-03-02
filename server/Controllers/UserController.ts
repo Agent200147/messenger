@@ -196,7 +196,7 @@ export const checkAuth2 = async (req, res, next) => {
         res.status(200).json({message: 'Ок'})
     } catch (error) {
         // res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
     }
 };
 

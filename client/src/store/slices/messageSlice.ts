@@ -3,16 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import { messagesApi } from "@/api/messages/messgesApi";
 import type { RootState } from "@/store/store";
 import type { MessageType } from "@/Models/Message/messageModel";
+import {Nullable} from "@/utils/typeUtils";
 
 interface InitialState {
-    messages: MessageType[]
-    newMessage: MessageType | {},
+    messages: MessageType[],
+    newMessage: Nullable<MessageType>,
     messagesScrollSmoothFlag: boolean
 }
 
 const initialState: InitialState = {
     messages: [],
-    newMessage: {},
+    newMessage: null,
     messagesScrollSmoothFlag: false
 }
 
