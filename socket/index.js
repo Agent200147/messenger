@@ -28,16 +28,18 @@ io.on('connection', (socket) => {
 
         }
         const onlineUsersIdsArray = onlineUsers.map(user => user.userId)
-        console.log('onlineUsers: ', onlineUsers)
+        // console.log('onlineUsers: ', onlineUsers)
         io.emit('onlineUsers', onlineUsersIdsArray)
         clearTimeout(offlineTimeOut)
     })
 
     socket.on('send-message', (message) => {
-        const user = onlineUsers.find((u) => u.userId === message.recipient.id)
+        const user = onlineUsers.find((u) => u.userId === message.recipientId)
         // console.log(message)
+        console.log(message, user)
+
         if (!user) return
-        console.log(user)
+        // console.log(user)
         io.to(user.socketId).emit('get-message', message)
 
         if (user) {

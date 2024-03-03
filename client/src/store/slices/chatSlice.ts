@@ -55,6 +55,11 @@ const slice = createSlice({
             state.onlineUsers = action.payload
         },
 
+        addNewOnlineUser: (state, action) => {
+            state.onlineUsers.push(action.payload)
+            console.log('addNewOnlineUser')
+        },
+
         setLastMessage: (state, action) => {
             const chat = findChatById(state, action.payload.chatId)
             if(!chat) return
@@ -116,7 +121,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers , setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead } = slice.actions;
+export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers, addNewOnlineUser, setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead } = slice.actions;
 
 export const selectUserChats = (state: RootState) => state.chats.chats
 export const selectCurrentChat = (state: RootState) => state.chats.currentChat

@@ -17,11 +17,11 @@ export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
     // console.log(user)
     return (
         <nav className={styles.authLinks}>
-            {/*<h1 onClick={() => router.push(Routes.PROFILE)} className={styles.username}>{user?.name} {user?.secondName}</h1>*/}
-            {/*<div className={styles.avatarWrapper}>*/}
-            {/*    <Image fill className={styles.avatar} src={ user.avatar ? `${process.env.SERVER_URL}/${user.avatar}` : avatarImg}*/}
-            {/*           alt={'Аватарка'}/>*/}
-            {/*</div>*/}
+            <h1 onClick={() => router.push(Routes.PROFILE)} className={styles.username}>{user?.name} {user?.secondName}</h1>
+            <div className={styles.avatarWrapper}>
+                <Image fill className={styles.avatar} src={ user.avatar ? `${process.env.SERVER_URL}/${user.avatar}` : avatarImg}
+                       alt={'Аватарка'}/>
+            </div>
 
             {/*<h1>{'authCookie'}</h1>*/}
         </nav>

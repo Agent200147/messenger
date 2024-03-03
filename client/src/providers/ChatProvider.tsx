@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {selectUser} from "@/store/slices/authSlice";
 // import {socket} from "@/socket/socket";
 import {
-    addNewChat,
+    addNewChat, addNewOnlineUser,
     addUnreadMessageToCurrentChat,
     addUnreadMessageToRecipient, markChatMessagesAsRead, markRecipientMessagesAsRead,
     selectCurrentChat, selectNewChat,
@@ -18,6 +18,7 @@ import { addMessage, selectNewMessage } from "@/store/slices/messageSlice";
 // import {Socket} from "node:net";
 import {io, Socket} from "socket.io-client";
 import {isEmpty} from "@/utils/ClientServices";
+import {disconnectSocket, initSocket} from "@/store/slices/socket.slice";
 const readChatMessages = async (chatId: number, recipientId: number) => {
     const response = await fetch(`${process.env.API_URL}/chats/read`, {
         method: 'POST',
@@ -69,13 +70,18 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
     // }, [user])
     //
     useEffect(() => {
-        if (isEmpty(user)) return
+        if (!user) return
         // console.log(user)
-        const newSocket = io('http://localhost:8001')
-        setSocket(newSocket)
+        // const newSocket = io('http://localhost:8001')
+        // console.log('first socket connected')
 
+        // setSocket(newSocket)
+
+        dispatch(initSocket())
+        dispatch(addNewOnlineUser(user.id))
         return () => {
-            newSocket.disconnect()
+            // newSocket.disconnect()
+            dispatch(disconnectSocket())
         }
     }, [user])
 
@@ -97,11 +103,11 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
             return
         }
 
-        socket.emit('newUser', user.id)
-        socket.on('onlineUsers', (users) => {
-            // console.log(user)
-            dispatch(setOnlineUsers(users))
-        })
+        // socket.emit('newUser', user.id)
+        // socket.on('onlineUsers', (users) => {
+        //     // console.log(user)
+        //     dispatch(setOnlineUsers(users))
+        // })
 
         socket.on('get-new-chat', (newChat) => {
             // console.log(user)
@@ -109,7 +115,7 @@ const ChatProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
         })
 
         return () => {
-            socket.off('onlineUsers')
+            // socket.off('onlineUsers')
             socket.off('get-new-chat')
         }
     }, [user, socket])
