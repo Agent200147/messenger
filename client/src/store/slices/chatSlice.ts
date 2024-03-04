@@ -93,7 +93,7 @@ const slice = createSlice({
         },
 
 
-        addUnreadMessageToCurrentChat: (state, _) => {
+        addUnreadMessageToCurrentChat: (state) => {
             state.currentChat && state.currentChat.unReadMessages++
             const chat = state.chats.find(chat => chat.chatId === state.currentChat?.chatId)
             if (!chat) return

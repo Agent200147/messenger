@@ -1,23 +1,21 @@
 'use client'
-// 'use server'
-import {memo, useEffect, useLayoutEffect} from "react";
-import type {FC} from "react";
+
+import type { FC } from "react";
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
 
 import styles from "@/components/ChatItem/chatItem.module.css";
-import avatarImg from "@/public/img/avatar.svg";
-import Image from "next/image";
-import {useDispatch, useSelector} from "react-redux";
-import {selectUser} from "@/store/slices/authSlice";
-import type {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
-import ChatItemSkeleton from "@/components/ChatItem/ChatItemSkeleton";
-import {useParams, useRouter, useSearchParams} from "next/navigation";
-import Link from "next/link";
+
+import { memo, useLayoutEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import cn from "classnames";
-import {selectCurrentChat, selectOnlineUsers, setCurrentChat, setLastMessage} from "@/store/slices/chatSlice";
+import Link from "next/link";
+import Image from "next/image";
+
+import avatarImg from "@/public/img/avatar.svg";
+import { selectOnlineUsers, setCurrentChat } from "@/store/slices/chatSlice";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
-import {setNewMessage} from "@/store/slices/messageSlice";
-import {Routes} from "@/Routes/routes";
+import { setNewMessage } from "@/store/slices/messageSlice"
+import { Routes } from "@/Routes/routes"
 
 type ChatItemProps = {
     chat: ChatTypeWithFullInfo,

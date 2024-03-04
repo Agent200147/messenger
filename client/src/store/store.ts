@@ -1,8 +1,9 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { api } from "@/api/api";
-import auth from '@/store/slices/authSlice'
+import auth, {setUser} from '@/store/slices/authSlice'
 import chats from '@/store/slices/chatSlice'
 import messages from '@/store/slices/messageSlice'
+import socket, {initSocket} from '@/store/slices/socket.slice'
 import { listenerMiddleware } from "@/middleware/auth";
 import socketMiddleware from "@/store/middleware/socket.middleware";
 import {Middleware} from "redux";
@@ -13,12 +14,13 @@ export const store = configureStore({
         auth,
         chats,
         messages,
+        socket
 
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([api.middleware, socketMiddleware]).prepend(listenerMiddleware.middleware),
-});
+})
 
-
+// store.dispatch(initSocket())
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

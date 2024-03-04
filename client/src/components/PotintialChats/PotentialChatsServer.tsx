@@ -7,7 +7,7 @@ const PotentialChatsServer: FC = async () => {
     const userChats = await getUserChats()
     // const userChats2 = await getUserChats()
     return (
-        <PotentialChats userChats={userChats} potentialChats={potentialChats}/>
+        <PotentialChats userChatsServer={userChats} potentialChats={potentialChats}/>
     );
 };
 

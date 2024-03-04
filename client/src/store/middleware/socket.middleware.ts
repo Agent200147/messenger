@@ -1,15 +1,26 @@
+import type { RootState } from "@/store/store";
+import type { SocketInterface } from "@/socket/socket";
+
 import { Middleware } from "redux";
+
 import {
     connectionEstablished,
     initSocket,
     connectionLost, disconnectSocket,
 } from "@/store/slices/socket.slice";
 import SocketFactory from "@/socket/socket";
-import type { SocketInterface } from "@/socket/socket";
-import {addNewOnlineUser, addUnreadMessageToRecipient, setLastMessage, setOnlineUsers} from "@/store/slices/chatSlice";
-import {messagesApi} from "@/api/messages/messgesApi";
-import {CustomStore, RootState, storeType} from "@/store/store";
-import {addMessage} from "@/store/slices/messageSlice";
+import {
+    addNewChat,
+    addNewOnlineUser, addUnreadMessageToCurrentChat,
+    addUnreadMessageToRecipient, markChatMessagesAsRead,
+    markRecipientMessagesAsRead, setCurrentChat,
+    setLastMessage,
+    setOnlineUsers
+} from "@/store/slices/chatSlice";
+import { messagesApi } from "@/api/messages/messgesApi";
+import { addMessage } from "@/store/slices/messageSlice";
+import { chatApi } from "@/api/chats/chatsApi";
+import { readChatMessages } from "@/utils/ClientServices";
 
 enum SocketNativeOnEvent {
     Connect = "connect",
@@ -18,25 +29,45 @@ enum SocketNativeOnEvent {
 }
 
 enum SocketEmitEvent {
-    NewUser = "newUser",
-    SendMessage = "send-message",
+    NewUser = 'newUser',
+    SendMessage = 'send-message',
+    ReadMessages = 'read-messages',
+    CreateNewChat = 'create-new-chat',
 }
 
 enum SocketOnEvent {
-    OnlineUsers = "onlineUsers",
-    GetMessage = "get-message",
+    OnlineUsers = 'onlineUsers',
+    GetMessage = 'get-message',
+    MarkReadMessages = 'mark-read-messages',
+    GetNewChat = 'get-new-chat',
 }
-
 
 const socketMiddleware: Middleware = (store) => {
     let socket: SocketInterface
-    const getState = () => store.getState() as RootState
 
+    const markChatMessagesAsReadAndEmit = async (currentChatId: number, recipientId: number) => {
+        const response = await readChatMessages(currentChatId, recipientId)
+        if (response) {
+            store.dispatch(markRecipientMessagesAsRead(currentChatId))
+            socket.socket.emit(SocketEmitEvent.ReadMessages, { chatId: Number(currentChatId), recipientId })
+        }
+    }
 
     return (next) => (action) => {
+        const getState = () => store.getState() as RootState
+
         if (initSocket.match(action)) {
             if (!socket && typeof window !== "undefined") {
                 socket = SocketFactory.create()
+
+                const currentChat = getState().chats.currentChat
+                const currentChatId = currentChat?.chatId
+                const recipientId = currentChat?.recipientInfo.user.id
+
+                if (currentChatId && recipientId && currentChat?.recipientInfo.unReadMessages !== 0) {
+                    console.log('markChatMessagesAsReadAndEmit', currentChatId, recipientId)
+                    markChatMessagesAsReadAndEmit(currentChatId, recipientId)
+                }
 
                 socket.socket.on(SocketNativeOnEvent.Connect, () => {
                     store.dispatch(connectionEstablished())
@@ -52,33 +83,68 @@ const socketMiddleware: Middleware = (store) => {
 
                 socket.socket.on(SocketOnEvent.OnlineUsers, (onlineUsers) => {
                     store.dispatch(setOnlineUsers(onlineUsers))
-                    console.log('SocketEvent.OnlineUsers', onlineUsers)
                 })
 
                 socket.socket.on(SocketOnEvent.GetMessage, (response) => {
                     const message = response.message
-                    const currentChatId = getState().chats.currentChat?.chatId
+                    const currentChat = getState().chats.currentChat
+                    const currentChatId = currentChat?.chatId
+                    const recipientId = currentChat?.recipientInfo.user.id
+
                     store.dispatch(setLastMessage(message))
                     if (currentChatId != message.chatId) {
                         store.dispatch(addUnreadMessageToRecipient(Number(message.chatId)))
                         return
                     }
                     store.dispatch(addMessage(message))
+
+                    if (!currentChatId || !recipientId) return
+                    markChatMessagesAsReadAndEmit(currentChatId, recipientId)
+
+                })
+
+                socket.socket.on(SocketOnEvent.MarkReadMessages, (chatId) => {
+                    store.dispatch(markChatMessagesAsRead(chatId))
+                })
+
+                socket.socket.on(SocketOnEvent.GetNewChat, (newChat) => {
+                    store.dispatch(addNewChat(newChat))
                 })
             }
         }
 
         if (addNewOnlineUser.match(action) && socket) {
             socket.socket.emit(SocketEmitEvent.NewUser, action.payload)
-            // console.log('SocketEvent.NewUser', action.payload)
+        }
+
+        if(setCurrentChat.match(action) && socket) {
+            console.log(action.payload)
+            const currentChat = action.payload
+            const currentChatId = currentChat?.chatId
+            const recipientId = currentChat?.recipientInfo.user.id
+            if (!currentChatId || !recipientId || currentChat?.recipientInfo.unReadMessages === 0) {
+                next(action)
+                return
+            }
+            markChatMessagesAsReadAndEmit(currentChatId, recipientId)
         }
 
         if(messagesApi.endpoints.sendMessage.matchFulfilled(action)) {
             const recipientId = getState().chats.currentChat?.recipientInfo.user.id
             if(!recipientId) return
-            // console.log('SocketEvent.SendMessage', { ...action.payload, recipientId})
+            store.dispatch(addUnreadMessageToCurrentChat())
             socket.socket.emit(SocketEmitEvent.SendMessage, {message: action.payload, recipientId})
-            // console.log('SocketEvent.SendMessage', action.payload)
+        }
+
+        if(chatApi.endpoints.createChat.matchFulfilled(action)) {
+            const newChat = action.payload
+            const recipientId = newChat.recipientInfo.user.id
+            const user = getState().auth.user
+            const updatedChat = { ...newChat, recipientInfo: { ...newChat.recipientInfo, user }}
+            console.log('SocketEmitEvent.CreateNewChat', { newChat: updatedChat, recipientId })
+
+            if(!recipientId || !user) return
+            socket.socket.emit(SocketEmitEvent.CreateNewChat, { newChat: updatedChat, recipientId })
         }
 
         if(disconnectSocket.match(action) && socket) {
@@ -87,7 +153,6 @@ const socketMiddleware: Middleware = (store) => {
             }
             socket.socket.disconnect()
         }
-
         next(action)
     }
 }

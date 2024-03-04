@@ -1,5 +1,6 @@
-import { api } from "@/api/api";
 import type { MessageType, NewMessageType } from "@/Models/Message/messageModel";
+
+import { api } from "@/api/api";
 
 export const messagesApi = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -17,7 +18,7 @@ export const messagesApi = api.injectEndpoints({
                 params: {
                     limit,
                     offset,
-                },
+                }
             })
         }),
 
@@ -25,14 +26,10 @@ export const messagesApi = api.injectEndpoints({
             query: ({ text, chatId, senderId }) => ({
                 url: `/messages`,
                 method: "POST",
-                body: { text,  chatId, senderId }
+                body: { text,  chatId, senderId },
             })
-        }),
-    }),
+        })
+    })
 })
 
-export const { useGetMessagesMutation, useSendMessageMutation, useGetAdditionalMessagesMutation } = messagesApi;
-
-// export const {
-//     endpoints: { login, register, current },
-// } = chatApi;
+export const { useGetMessagesMutation, useSendMessageMutation, useGetAdditionalMessagesMutation } = messagesApi

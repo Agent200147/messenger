@@ -5,7 +5,7 @@ const UseCustomObserver = (elementRef: RefObject<HTMLDivElement>, callback: () =
     const observer = useRef<IntersectionObserver | null>(null);
 
     useEffect(() => {
-        let timeout
+        let timeout: ReturnType<typeof setTimeout>
         observer.current = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {

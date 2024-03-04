@@ -12,11 +12,12 @@ import CustomToast from "@/components/CustomToast/CustomToast";
 import {selectUser} from "@/store/slices/authSlice";
 import {useEffect, useLayoutEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-const PotentialChats = ({ userChats, potentialChats }) => {
+import {Routes} from "@/Routes/routes";
+const PotentialChats = ({ userChatsServer, potentialChats }) => {
     const user = useSelector(selectUser)
     const router = useRouter()
-    // const userChats = useSelector(selectUserChats)
-
+    const userChatsStore = useSelector(selectUserChats)
+    const userChats = !!userChatsStore.length ? userChatsStore : userChatsServer
     // const [filteredPotentialChats, setFilteredPotentialChats] = useState(null)
 
     // useLayoutEffect(() => {
@@ -32,7 +33,7 @@ const PotentialChats = ({ userChats, potentialChats }) => {
         try {
             const response = await createChat(recipientId).unwrap()
             // console.log(response)
-            router.push(`/chats/${response.chatId}`)
+            router.push(`${Routes.CHATS}/${response.chatId}`)
             // toast.success(<CustomToast text="Фото профиля успешно обновлено" />)
         } catch (error: any) {
             // console.log(error?.data)

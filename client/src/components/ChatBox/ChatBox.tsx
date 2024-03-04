@@ -56,8 +56,8 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     const offset = useRef(20)
     const prevMessageStore = useRef(20)
 
-    const messages = messagesStore?.length ? messagesStore : messagesFromServer
-    const unReadMessages = unReadMessagesStore || unReadMessagesFromServer
+    const messages = !!messagesStore?.length ? messagesStore : messagesFromServer
+    const unReadMessages = unReadMessagesStore !== undefined ? unReadMessagesStore : unReadMessagesFromServer
 
     useCustomObserver(firstMessageRef,  async () => {
         if (!hasAdditionalMessages) {
@@ -72,30 +72,29 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
         offset.current = offset.current + 20
     })
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         dispatch(setMessages(messagesFromServer))
-
-        lastMessageRef.current?.scrollIntoView({ behavior: "instant" })
-        console.log('scrollIntoView')
     }, [currentChatId])
 
+    useLayoutEffect(() => {
+        lastMessageRef.current?.scrollIntoView({ behavior: "instant" })
+    }, [lastMessageRef.current])
 
-    useEffect(() => {
+
+    useLayoutEffect(() => {
         if (!additionalMessages || !scrollRefContainer.current) return
         scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollTop + (scrollRefContainer.current.scrollHeight / messagesStore.length) * ( messagesStore.length - (prevMessageStore.current))
         console.log('длина',  messagesStore.length , (prevMessageStore.current))
         prevMessageStore.current = messagesStore.length
-    }, [messagesStore]);
+    }, [messagesStore])
 
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-
         if(!newMessage) return
+
         prevMessageStore.current++
         offset.current++
-        console.log('scrollSmoothFlag')
-        console.log(prevMessageStore.current, offset.current)
-    }, [scrollSmoothFlag]);
+    }, [scrollSmoothFlag])
 
     return (
         <div className={styles.wrapper}>
@@ -119,7 +118,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
                         const { id, senderId, text, createdAt } = msg;
                         const messageNumberReverse = messages.length - (index + 1)
                         const selfMessage = senderId !== recipient.id
-                        const ref = index === messages.length - 1 ? lastMessageRef : (index === 5 ? firstMessageRef : null)
+                        const ref = index === messages.length - 1 ? lastMessageRef : (index === 7 ? firstMessageRef : null)
                         return (
                             <div key={id}
                                  ref={ref}
