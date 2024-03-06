@@ -5,6 +5,7 @@ export type UserType = {
     email: string,
     avatar: string | null,
     password: string,
+    lastOnline: string
 }
 
 export type AuthenticatedUserType = Omit<UserType, 'password'> & { token: string}

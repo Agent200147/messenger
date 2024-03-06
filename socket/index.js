@@ -89,6 +89,12 @@ io.on('connection', (socket) => {
         // }
     })
 
+    socket.on('remove-online-user', (userId) => {
+        console.log('remove-online-user', userId)
+        onlineUsers = onlineUsers.filter((u) => u.socketId !== socket.id)
+        io.emit('get-remove-online-user', userId)
+    })
+
     let offlineTimeOut
     socket.on("disconnect", (reason) => {
         // offlineTimeOut = setTimeout(() => {

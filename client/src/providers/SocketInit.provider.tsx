@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "@/store/slices/authSlice";
 import { addNewOnlineUser } from "@/store/slices/chatSlice";
 import { disconnectSocket, initSocket } from "@/store/slices/socket.slice";
+import { useSetLastOnlineOnUnload } from "@/hooks/useSetLastOnlineOnUnload";
 
 const SocketInitProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
     const dispatch = useDispatch()
@@ -22,6 +23,8 @@ const SocketInitProvider = ({ children }: Readonly<{ children: ReactNode }>) => 
             dispatch(disconnectSocket())
         }
     }, [dispatch, user])
+
+    useSetLastOnlineOnUnload()
 
     return <> {children}</>
 }

@@ -13,14 +13,14 @@ import {
     addNewChat,
     addNewOnlineUser, addUnreadMessageToCurrentChat,
     addUnreadMessageToRecipient, markChatMessagesAsRead,
-    markRecipientMessagesAsRead, setCurrentChat,
+    markRecipientMessagesAsRead, removeOnlineUser, setCurrentChat,
     setLastMessage,
     setOnlineUsers
 } from "@/store/slices/chatSlice";
 import { messagesApi } from "@/api/messages/messgesApi";
 import { addMessage } from "@/store/slices/messageSlice";
 import { chatApi } from "@/api/chats/chatsApi";
-import { readChatMessages } from "@/utils/ClientServices";
+import { readChatMessages, setLastOnline } from "@/utils/ClientServices";
 
 enum SocketNativeOnEvent {
     Connect = "connect",
@@ -33,6 +33,7 @@ enum SocketEmitEvent {
     SendMessage = 'send-message',
     ReadMessages = 'read-messages',
     CreateNewChat = 'create-new-chat',
+    RemoveOnlineUser = 'remove-online-user',
 }
 
 enum SocketOnEvent {
@@ -40,6 +41,8 @@ enum SocketOnEvent {
     GetMessage = 'get-message',
     MarkReadMessages = 'mark-read-messages',
     GetNewChat = 'get-new-chat',
+    GetRemoveOnlineUser = 'get-remove-online-user',
+
 }
 
 const socketMiddleware: Middleware = (store) => {
@@ -110,6 +113,11 @@ const socketMiddleware: Middleware = (store) => {
                 socket.socket.on(SocketOnEvent.GetNewChat, (newChat) => {
                     store.dispatch(addNewChat(newChat))
                 })
+
+                socket.socket.on(SocketOnEvent.GetRemoveOnlineUser, (userId) => {
+                    console.log('SocketOnEvent.GetRemoveOnlineUser', userId)
+                    store.dispatch(removeOnlineUser(userId))
+                })
             }
         }
 
@@ -118,7 +126,7 @@ const socketMiddleware: Middleware = (store) => {
         }
 
         if(setCurrentChat.match(action) && socket) {
-            console.log(action.payload)
+            // console.log(action.payload)
             const currentChat = action.payload
             const currentChatId = currentChat?.chatId
             const recipientId = currentChat?.recipientInfo.user.id
@@ -148,6 +156,9 @@ const socketMiddleware: Middleware = (store) => {
         }
 
         if(disconnectSocket.match(action) && socket) {
+            setLastOnline()
+            const user = getState().auth.user
+            if (user) socket.socket.emit(SocketEmitEvent.RemoveOnlineUser, user.id)
             for (let socketOnEventKey in SocketOnEvent) {
                 socket.socket.off(socketOnEventKey)
             }

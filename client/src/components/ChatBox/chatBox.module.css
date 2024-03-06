@@ -49,10 +49,23 @@
     color: var(--gray)
 }
 
+.lastOnlineTime {
+    color: var(--main-color);
+}
+
+.lastOnline__skeleton {
+    border-radius: 0.3em;
+    height: 1.9em;
+    animation: skeleton-loading 0.5s ease-in-out infinite alternate;
+}
+
+.lastOnline__skeleton > * {
+    display: none;
+}
+
 .messages {
     display: flex;
     flex-direction: column;
-    /*justify-content: flex-end;*/
     overflow-x: hidden;
     overflow-y: scroll;
     row-gap: 1.5em;
@@ -157,18 +170,9 @@
     justify-content: flex-start;
 }
 
-
-.readCheckMarkWrapper {
-    display: flex;
-}
-
-.readCheckMarkWrapper svg{
-    width: calc(2.5em / var(--message-ratio));
-}
-
 .messageTime {
     font-size: calc(1.4em / var(--message-ratio));
-    color: var(--gray);
+    color: var(--main-color);
 }
 
 .unReadMessage {
@@ -207,5 +211,21 @@
         /*transform: scale(1);*/
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+@keyframes skeleton-loading {
+    /*0% {*/
+    /*    background-color: hsl(200, 20%, 80%);*/
+    /*}*/
+    /*100% {*/
+    /*    background-color: hsl(200, 20%, 95%);*/
+    /*}*/
+
+    0% {
+        background-color: rgba(147, 147, 147, 0.3);
+    }
+    100% {
+        background-color: rgba(206, 206, 206, 0.3);
     }
 }

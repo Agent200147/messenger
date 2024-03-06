@@ -30,7 +30,7 @@ export const getChatMessagesAndRecipient = async (req, res) => {
                 chatId
             }
         })
-        console.log(user_chat)
+        // console.log(user_chat)
 
         if (!user_chat) {
             return res.status(400).json({ message: 'Чат не найден' })

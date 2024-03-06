@@ -106,7 +106,7 @@ export const findChat = async (req, res) => {
 
 export const findUserChatsAndRecipients = async (req, res) => {
     const userId = req.params.userId
-    console.log('---------------')
+    // console.log('---------------')
 
     try {
         // const chats = await chatModel.findAll({where: {members: {[Op.like]: '%' + userId + '%'}}})
@@ -174,7 +174,7 @@ export const findUserChatsAndRecipients = async (req, res) => {
 
 export const findUserPotentialChats = async (req, res) => {
     const userId = req.user.id
-    console.log(userId)
+    // console.log(userId)
     try {
         const users = await UserModel.findAll({
             where: { id: {[Op.not]: userId} },
@@ -188,8 +188,8 @@ export const findUserPotentialChats = async (req, res) => {
 
 export const readChatMessages = async (req, res) => {
     const { chatId, recipientId } = req.body
-    console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------')
-    console.log({ chatId, recipientId })
+    // console.log('-----------------------------------------------------------------------------------------------------------------------------------------------------------------')
+    // console.log({ chatId, recipientId })
     try {
         const user_chat = await User_ChatModel.findOne({where: {chatId, userId: recipientId}})
         // console.log(user_chat)

@@ -6,7 +6,7 @@ import {
     getUsers,
     currentUser,
     checkAuth,
-    checkAuth2, userAvatarUpload
+    checkAuth2, userAvatarUpload, setLastOnline
 } from "../Controllers/UserController.js";
 import {uploadMiddleware} from "../Middleware/uploadPhoto.js";
 
@@ -19,5 +19,6 @@ router.get("/", checkAuth, getUsers)
 router.get("/current", currentUser)
 router.get("/checkAuth", checkAuth2)
 router.post("/avatarUpload", checkAuth, uploadMiddleware, userAvatarUpload)
+router.post("/lastOnline", checkAuth, setLastOnline)
 
 export default router

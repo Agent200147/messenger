@@ -57,7 +57,9 @@ const UserModel = (sequelize, DataTypes) => {
             required: true,
             allowNull: false,
             minLength: 8,
-        }
+        },
+
+        lastOnline: DataTypes.DATE,
     }, {
         sequelize,
         createdAt: false,

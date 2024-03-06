@@ -1,3 +1,5 @@
+import {useEffect} from "react";
+
 type variableType = string | {} | Array<any> | null | undefined
 export const isEmpty = (variable: variableType): boolean => {
     if (typeof variable === 'string') return !variable
@@ -23,3 +25,24 @@ export const readChatMessages = async (chatId: number, recipientId: number) => {
     }
 }
 
+export const setLastOnline = async () => {
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(`${process.env.API_URL}/users/lastOnline`)
+    }
+    else {
+        try {
+            const response = await fetch(`${process.env.API_URL}/users/lastOnline`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+            })
+            return response.ok
+
+        } catch (error) {
+            return false
+        }
+    }
+
+}

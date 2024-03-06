@@ -233,6 +233,18 @@ export const userAvatarUpload = async (req, res) => {
         // res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
         res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
     }
+}
+
+export const setLastOnline = async (req, res) => {
+    try {
+        const user = await UserModel.findByPk(req.user.id)
+        user.update({ lastOnline: new Date() })
+        // console.log(user)
+        res.status(200).json({message: 'Ок'})
+    } catch (error) {
+        // res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+        res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+    }
 };
 
 

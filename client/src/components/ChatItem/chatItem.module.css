@@ -69,6 +69,7 @@
     position: relative;
     width: 6em;
     aspect-ratio: 1 / 1;
+    flex-shrink: 0;
 }
 
 .avatar {
@@ -123,6 +124,11 @@
     font-size: 1.8em;
     font-weight: 500;
     color: white;
+
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 
 .recipientUser__skeleton {
