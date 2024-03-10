@@ -1,0 +1,95 @@
+.recipientInfo {
+    padding: 0.7em 2em;
+    display: flex;
+    align-items: center;
+    column-gap: 1.5em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 6em;
+    aspect-ratio: 1 / 1;
+}
+
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.recipient {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+}
+
+.recipientFullName {
+    font-size: 1.8em;
+    font-weight: 500;
+    color: white;
+}
+
+.typingStatus {
+    display: flex;
+    column-gap: calc(0.2em / var(--lastOnline-ration));
+    align-items: flex-end;
+}
+
+.typingAnimation {
+    display: flex;
+    align-items: center;
+    column-gap: calc(0.2em / var(--lastOnline-ration));
+    transform: translateY(calc(-0.3em / var(--lastOnline-ration)));
+}
+
+.typingAnimation span {
+    width: calc(0.3em / var(--lastOnline-ration));
+    aspect-ratio: 1 / 1;
+    background: var(--gray);
+    border-radius: 50%;
+    animation: typing 0.8s infinite ease-in-out;
+}
+
+.typingAnimation span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.typingAnimation span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.lastOnline {
+    --lastOnline-ration: 1.6;
+    font-size: 1.6em;
+    font-weight: 400;
+    color: var(--gray);
+}
+
+.lastOnlineTime {
+    color: var(--main-color);
+}
+
+.lastOnline__skeleton {
+    border-radius: 0.3em;
+    height: 1.9em;
+    animation: skeleton-loading 0.5s ease-in-out infinite alternate;
+}
+
+.lastOnline__skeleton > * {
+    display: none;
+}
+
+@keyframes typing {
+    0% {
+        transform: translateY(0);
+    }
+
+    20% {
+        transform: translateY(calc(-0.3em / var(--lastOnline-ration)));
+    }
+
+    45% {
+        transform: translateY(0);
+    }
+
+}

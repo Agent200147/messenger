@@ -25,6 +25,7 @@ export default async function Home({ params } : {
     const serverSideMessagesAndRecipient = await getChatMessagesAndRecipient(chatId)
     if (!serverSideMessagesAndRecipient)
         redirect('/')
+    // router.refresh()
     return (
         <>
             {/*<Chats preloadedChats={userChats}/>*/}

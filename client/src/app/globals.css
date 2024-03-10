@@ -123,6 +123,17 @@ a {
   text-decoration: none;
 }
 
+.hover-link {
+  -webkit-transition: all 0.1s linear;
+  -moz-transition: all 0.1s linear;
+  -o-transition: all 0.1s linear;
+  transition: all 0.1s linear;
+}
+
+.hover-link:hover {
+  color: var(--main-color);
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

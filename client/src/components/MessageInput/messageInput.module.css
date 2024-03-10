@@ -20,31 +20,57 @@
     cursor: auto;
 }
 
-.inputWrapper svg {
+.sendButton {
+    color: var(--gray);
     width: 2.7em;
     aspect-ratio: 1 / 1;
 
     transform: scale(0.9);
-
-    -webkit-transition: all 0.2s linear;
-    -moz-transition: all 0.2s linear;
-    -o-transition: all 0.2s linear;
-    transition: all 0.2s linear;
 }
 
-.inputWrapper svg path {
-    -webkit-transition: all 0.2s linear;
-    -moz-transition: all 0.2s linear;
-    -o-transition: all 0.2s linear;
+.sendButton.active {
+    color: var(--main-color);
+    transform: scale(1);
+}
+
+.sendButton path {
+    fill-opacity: 0.7;
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
     transition: all 0.1s linear;
 }
 
-.inputWrapper svg.active path {
-    fill: var(--main-color);
+.sendButton.active path {
     fill-opacity: 1;
 }
 
-.inputWrapper svg.active {
-    transform: scale(1);
-}
+/*.inputWrapper svg {*/
+/*    width: 2.7em;*/
+/*    aspect-ratio: 1 / 1;*/
+
+/*    transform: scale(0.9);*/
+
+/*    -webkit-transition: all 0.2s linear;*/
+/*    -moz-transition: all 0.2s linear;*/
+/*    -o-transition: all 0.2s linear;*/
+/*    transition: all 0.2s linear;*/
+/*}*/
+
+/*.inputWrapper svg path {*/
+/*    -webkit-transition: all 0.2s linear;*/
+/*    -moz-transition: all 0.2s linear;*/
+/*    -o-transition: all 0.2s linear;*/
+/*    transition: all 0.1s linear;*/
+/*}*/
+
+/*.inputWrapper.active svg path {*/
+/*    fill: var(--main-color);*/
+/*    fill-opacity: 1;*/
+/*}*/
+
+/*.inputWrapper.active svg {*/
+/*    transform: scale(1);*/
+/*}*/
 

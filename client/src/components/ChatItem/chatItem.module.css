@@ -84,9 +84,9 @@
 
 .onlineStatus, .onlineStatusActive {
     position: absolute;
-    top: 4.6em;
-    left: 4em;
-    width: 1.3em;
+    top: 76%;
+    left: 66%;
+    width: 22%;
     aspect-ratio: 1 / 1;
     background: var(--main-color);
     border-radius: 50%;

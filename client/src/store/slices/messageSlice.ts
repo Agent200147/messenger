@@ -37,7 +37,7 @@ const slice = createSlice({
     extraReducers: (builder) => {
         builder
             .addMatcher(messagesApi.endpoints.getMessages.matchFulfilled, (state, action) => {
-                // state.messages = action.payload
+                state.messages = action.payload
                 console.log(action.payload)
             })
 

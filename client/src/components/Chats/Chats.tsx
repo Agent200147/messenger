@@ -49,8 +49,8 @@ const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
             return
         }
         const filteredChats = userChatsStore?.filter(chat => {
-            const fullname = chat.recipientInfo.user.name + ' ' + chat.recipientInfo.user.secondName
-            return fullname.includes(value)
+            const fullName = chat.recipientInfo.user.name.toLowerCase() + ' ' + chat.recipientInfo.user.secondName.toLowerCase()
+            return fullName.includes(value.toLowerCase())
         })
         if (!filteredChats.length)  {
             setIsEmptySearchResult(true)

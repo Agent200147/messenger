@@ -13,6 +13,9 @@ import {selectUser} from "@/store/slices/authSlice";
 import {useEffect, useLayoutEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {Routes} from "@/Routes/routes";
+import SendButtonSvg from "@/components/SvgComponents/sendButton.svg";
+import Moment from "react-moment";
+import TestParentcomponent from "@/components/testParentcomponent";
 const PotentialChats = ({ userChatsServer, potentialChats }) => {
     const user = useSelector(selectUser)
     const router = useRouter()
@@ -56,8 +59,13 @@ const PotentialChats = ({ userChatsServer, potentialChats }) => {
                                 </div>
                                 <div className={styles.chatMain}>
                                     <div className={styles.user}>{potentialUser?.name} {potentialUser?.secondName}</div>
-                                    <button className={styles.writeBtn} onClick={() => createNewChat(potentialUser.id)}>Написать</button>
+                                    {/*<button className={styles.writeBtn} onClick={() => createNewChat(potentialUser.id)}>Написать</button>*/}
+                                    <div className={styles.registerTimeWrapper}>С нами с <Moment className={styles.registerTime} format="DD.MM.yy">{potentialUser?.createdAt}</Moment></div>
                                 </div>
+                                <hr className={styles.hr}/>
+                                <button className={styles.writeBtn} onClick={() => createNewChat(potentialUser.id)}>
+                                    <SendButtonSvg/>
+                                </button>
                             </div>
                         )
                     })

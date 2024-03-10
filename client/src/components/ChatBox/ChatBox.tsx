@@ -3,13 +3,13 @@
 import styles from './chatBox.module.css'
 
 import {FC, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { useSearchParams } from "next/navigation";
+import {useRouter, useSearchParams } from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
 import Moment from "react-moment";
 import 'moment-timezone';
 import 'moment/locale/ru';
 
-import {selectCurrentChat, selectOnlineUsers, selectUserChats} from "@/store/slices/chatSlice";
+import {selectCurrentChat, selectOnlineUsers, selectTypingTrigger, selectUserChats} from "@/store/slices/chatSlice";
 import Image from "next/image";
 import avatarImg from '@/public/img/avatar.svg'
 import MessageInput from "@/components/MessageInput/MessageInput";
@@ -27,6 +27,7 @@ import {isEmpty} from "@/utils/ClientServices";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
 import cn from "classnames";
 import useCustomObserver from "@/hooks/useCustomObserver";
+import ChatBoxRecipient from "@/components/ChatBoxRecipient/ChatBoxRecipient";
 
 type CurrentChatProps = {
     currentChatId: string,
@@ -36,18 +37,15 @@ type CurrentChatProps = {
         recipients: UserInChatType[]
     }
 }
+
 const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRecipient }) => {
     const { unReadMessages: unReadMessagesFromServer, messages: messagesFromServer, recipients } = serverSideMessagesAndRecipient
-
     const dispatch = useDispatch()
     const currentChat = useSelector(selectCurrentChat)
     const messagesStore = useSelector(selectMessages)
     const scrollSmoothFlag = useSelector(selectMessagesScrollSmoothFlag)
-    const onlineUsers = useSelector(selectOnlineUsers)
 
     const recipient = currentChat ? currentChat.recipientInfo.user : recipients[0]
-
-    const isOnlineRecipient = onlineUsers.find(userId => userId === recipient.id)
 
     const unReadMessagesStore = currentChat?.unReadMessages
 
@@ -65,6 +63,8 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     const unReadMessages = unReadMessagesStore !== undefined ? unReadMessagesStore : unReadMessagesFromServer
     const prevContainerHeightRef = useRef<number>(0)
 
+    console.log('typingTrigger: ChatBox')
+
     useCustomObserver(firstMessageRef,  async () => {
         if (!hasAdditionalMessages) {
             return
@@ -74,13 +74,16 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
 
         if (isEmpty(response)) {
             setHasAdditionalMessages(false)
+            return
         }
         offset.current = offset.current + 20
     })
 
     useLayoutEffect(() => {
+        // console.log('router.refresh()')
         dispatch(setMessages(messagesFromServer))
     }, [currentChatId])
+
 
     useEffect(() => {
         if (scrollRefContainer.current)
@@ -88,20 +91,29 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     }, [scrollRefContainer.current])
 
     useLayoutEffect(() => {
+        // console.log('{ behavior: "instant" }')
         lastMessageRef.current?.scrollIntoView({ behavior: "instant" })
+        // scrollRefContainer.current?.scroll({ behavior: 'smooth', inline: 'end' })
+
+        // if (scrollRefContainer.current) {
+        //     const { scrollHeight, clientHeight } = scrollRefContainer.current;
+        //     scrollRefContainer.current.scrollTop = scrollHeight - clientHeight;
+        // }
     }, [scrollRefContainer.current])
 
 
     useLayoutEffect(() => {
         if (!additionalMessages || !scrollRefContainer.current) return
         const heightDifference = scrollRefContainer.current.scrollHeight - prevContainerHeightRef.current
+        console.log('heightDifference', scrollRefContainer.current.scrollTop, scrollRefContainer.current.scrollHeight)
+
         scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollTop + heightDifference
+
         prevContainerHeightRef.current = scrollRefContainer.current.scrollHeight
 
-    }, [messagesStore])
+    }, [additionalMessages, scrollRefContainer.current])
 
-    useEffect(() => {
-        console.log('scrollSmoothFlag', offset.current)
+    useLayoutEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
         if (scrollRefContainer.current)
             prevContainerHeightRef.current = scrollRefContainer.current.scrollHeight
@@ -111,45 +123,15 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
 
     }, [scrollSmoothFlag])
 
-    const calendarStrings = {
-        lastDay : '[вчера, в] LT',
-        sameDay : '[сегодня, в] LT',
-        lastWeek: '[в] dddd, [в] LT',
-        sameElse : 'DD MMMM, [в] LT',
 
-    }
     return (
         <div className={styles.wrapper}>
-            <div className={styles.recipientInfo}>
-                <div className={styles.avatarWrapper}>
-                    <Image className={styles.avatar} fill src={recipient.avatar ? `http://localhost:8000/${recipient.avatar}` : avatarImg} alt='Аватарка' />
-                </div>
-                <div className={styles.recipient}>
-                    <div className={styles.recipientFullName}>
-                        {recipient.name} {recipient.secondName}
-                    </div>
-                    {
-                        !!onlineUsers.length
-                            ? (
-                                <div className={styles.lastOnline}>
-                                    {isOnlineRecipient
-                                        ? <div className={styles.messageTime}>Онлайн</div>
-                                        : <>Был(-а) в сети <Moment calendar={calendarStrings}
-                                                                   className={styles.lastOnlineTime}
-                                                                   fromNowDuring={1000 * 60 * 60}
-                                                                   locale="ru">{recipient.lastOnline}</Moment></>
-                                    }
-                                </div>
-                            )
-                            : <div className={styles.lastOnline__skeleton}></div>
-                    }
-
-                </div>
-            </div>
+            <ChatBoxRecipient recipient={recipient} />
 
             <div className={styles.messages} ref={scrollRefContainer}>
                 <div className={styles.messagesWrapper}>
                     {messages?.map((msg, index) => {
+                        if(index === 0) console.log('messages render')
                         const {id, senderId, text, createdAt} = msg;
                         const messageNumberReverse = messages.length - (index + 1)
                         const selfMessage = senderId !== recipient.id

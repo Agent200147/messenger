@@ -1,11 +1,13 @@
 .potentialChatsWrapper {
     font-size: 1rem;
-    display: flex;
-    flex-direction: column;
-    row-gap: 1em;
-    flex-basis: 15%;
-    flex-shrink: 0;
-    padding: 1.4em;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: min-content;
+    column-gap: 3em;
+    row-gap: 2em;
+    /*flex-basis: 15%;*/
+    flex-grow: 1;
+    padding: 2.4em;
     border-left: 1px solid var(--border-color);
 
 }
@@ -13,6 +15,10 @@
 .potentialChat {
     display: flex;
     align-items: center;
+    column-gap: 1.5em;
+    padding: 1em 2em;
+    border: 2px solid var(--border-color);
+    border-radius: 0.4em;
     /*padding: 1.5em 2em;*/
     /*border-bottom: 1px solid var(--border-color);*/
     /*cursor: pointer;*/
@@ -20,7 +26,7 @@
 
 .avatarWrapper {
     position: relative;
-    width: 6em;
+    width: 8em;
     aspect-ratio: 1 / 1;
 }
 
@@ -32,49 +38,57 @@
 .chatMain {
     display: flex;
     flex-direction: column;
+    /*flex-grow: 1;*/
+    row-gap: 0.5em;
+}
+
+.hr {
     flex-grow: 1;
-    padding: 1em 1.5em;
-    row-gap: 1em;
+    height: 1px;
+    background: var(--border-color);
 }
 
 .user {
-    font-size: 1.7em;
+    font-size: 2.2em;
     font-weight: 500;
     color: white;
+
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    white-space: break-spaces;
 }
 
 .onlineStatus {
     position: absolute;
-    top: 4.6em;
-    left: 4em;
-    width: 1.3em;
+    top: 76%;
+    left: 66%;
+    width: 22%;
     aspect-ratio: 1 / 1;
     background: var(--main-color);
     border-radius: 50%;
-    outline: 0.3em solid var(--black);
+    outline: 0.4em solid var(--black);
 
     -webkit-transition: all 0.1s linear;
     -moz-transition: all 0.1s linear;
     -o-transition: all 0.1s linear;
     transition: all 0.1s linear;
+}
+
+.registerTimeWrapper {
+    font-size: 1.6em;
+}
+
+.registerTime {
+    color: var(--main-color);
 }
 
 .writeBtn {
-    --writeBtn-ratio: 1.5;
-    font-size: 1.5em;
-    font-weight: 500;
-    padding: calc(0.4em / var(--writeBtn-ratio));
-    border-radius: calc(0.5em / var(--writeBtn-ratio));
-    color: var(--main-color);
-    outline: 1px solid var(--main-color);
-
-    -webkit-transition: all 0.1s linear;
-    -moz-transition: all 0.1s linear;
-    -o-transition: all 0.1s linear;
-    transition: all 0.1s linear;
+    width: 2.7em;
+    color: var(--gray);
 }
 
 .writeBtn:hover {
-    color: var(--black);
-    background: var(--main-color);
+    color: var(--main-color);
 }

@@ -23,6 +23,7 @@ export const createMessage = async (req, res) => {
 export const getChatMessagesAndRecipient = async (req, res) => {
     const { chatId } = req.params
     const user = req.user
+    console.log('-----------------')
     try {
         const user_chat = await User_ChatModel.findOne({
             where: {

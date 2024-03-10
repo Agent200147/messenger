@@ -3,9 +3,10 @@
     width: 100%;
     height: var(--header-height);
 
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    /*justify-content: space-between;*/
     align-items: center;
+    grid-template-columns: 1fr auto 1fr;
 
     padding-inline: 3em;
     border-bottom: 1px solid var(--border-color);

@@ -1,24 +1,44 @@
-.authLinks {
+.authLinksWrapper {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     column-gap: 1em;
 
     cursor: pointer;
 }
 
+.authLink {
+    font-size: 2em;
+}
+
+.active {
+    color: var(--main-color)
+}
+
 .username {
     font-size: 2em;
 }
 
-.nonAuthLinks {
+.nonAuthLinksWrapper {
     display: flex;
     align-items: center;
-    column-gap: 30px;
+    column-gap: 3rem;
 }
 
 .nonAuthLink {
     font-size: 2em;
     padding: 0.3em 0.75em;
+}
+
+.userProfileWrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    column-gap: 1.2em;
 }
 
 .avatarWrapper {

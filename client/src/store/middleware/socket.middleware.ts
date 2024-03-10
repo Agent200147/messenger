@@ -13,9 +13,9 @@ import {
     addNewChat,
     addNewOnlineUser, addUnreadMessageToCurrentChat,
     addUnreadMessageToRecipient, markChatMessagesAsRead,
-    markRecipientMessagesAsRead, removeOnlineUser, setCurrentChat,
+    markRecipientMessagesAsRead, removeOnlineUser, drawToRecipient, setCurrentChat,
     setLastMessage,
-    setOnlineUsers
+    setOnlineUsers, setRecipientCanvas, endDrawToRecipient, setIsRecipientDrawing, getTypingTrigger, sendTypingTrigger
 } from "@/store/slices/chatSlice";
 import { messagesApi } from "@/api/messages/messgesApi";
 import { addMessage } from "@/store/slices/messageSlice";
@@ -34,6 +34,9 @@ enum SocketEmitEvent {
     ReadMessages = 'read-messages',
     CreateNewChat = 'create-new-chat',
     RemoveOnlineUser = 'remove-online-user',
+    DrawToRecipient = 'draw-to-recipient',
+    EndDrawToRecipient = 'end-draw-to-recipient',
+    TypingTrigger = 'typing-trigger',
 }
 
 enum SocketOnEvent {
@@ -42,7 +45,9 @@ enum SocketOnEvent {
     MarkReadMessages = 'mark-read-messages',
     GetNewChat = 'get-new-chat',
     GetRemoveOnlineUser = 'get-remove-online-user',
-
+    GetRecipientDraw = 'get-recipient-draw',
+    GetEndRecipientDraw = 'get-end-recipient-draw',
+    GetTypingTrigger = 'get-typing-trigger',
 }
 
 const socketMiddleware: Middleware = (store) => {
@@ -118,6 +123,19 @@ const socketMiddleware: Middleware = (store) => {
                     console.log('SocketOnEvent.GetRemoveOnlineUser', userId)
                     store.dispatch(removeOnlineUser(userId))
                 })
+
+                socket.socket.on(SocketOnEvent.GetRecipientDraw, (data) => {
+                    store.dispatch(setRecipientCanvas(data))
+                    store.dispatch(setIsRecipientDrawing(true))
+                })
+
+                socket.socket.on(SocketOnEvent.GetEndRecipientDraw, () => {
+                    store.dispatch(setIsRecipientDrawing(false))
+                })
+
+                socket.socket.on(SocketOnEvent.GetTypingTrigger, () => {
+                    store.dispatch(getTypingTrigger())
+                })
             }
         }
 
@@ -153,6 +171,21 @@ const socketMiddleware: Middleware = (store) => {
 
             if(!recipientId || !user) return
             socket.socket.emit(SocketEmitEvent.CreateNewChat, { newChat: updatedChat, recipientId })
+        }
+
+        if(drawToRecipient.match(action)) {
+            // console.log('sendMyCanvas:', action.payload)
+            socket.socket.emit(SocketEmitEvent.DrawToRecipient, action.payload)
+        }
+
+        if(endDrawToRecipient.match(action)) {
+            // console.log('sendMyCanvas:', action.payload)
+            socket.socket.emit(SocketEmitEvent.EndDrawToRecipient, action.payload)
+        }
+
+        if(sendTypingTrigger.match(action)) {
+            // console.log('sendTypingTrigger:', action.payload)
+            socket.socket.emit(SocketEmitEvent.TypingTrigger, action.payload)
         }
 
         if(disconnectSocket.match(action) && socket) {

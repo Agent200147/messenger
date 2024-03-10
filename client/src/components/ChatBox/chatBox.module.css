@@ -11,58 +11,6 @@
     /*overflow-y: auto;*/
 }
 
-.recipientInfo {
-    padding: 0.7em 2em;
-    display: flex;
-    align-items: center;
-    column-gap: 1.5em;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.avatarWrapper {
-    position: relative;
-    width: 6em;
-    aspect-ratio: 1 / 1;
-}
-
-.avatar {
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-
-.recipient {
-    display: flex;
-    flex-direction: column;
-    row-gap: 0.5em;
-}
-
-.recipientFullName {
-    font-size: 1.8em;
-    font-weight: 500;
-    color: white;
-}
-
-.lastOnline {
-    font-size: 1.6em;
-    font-weight: 400;
-    color: var(--gray)
-}
-
-.lastOnlineTime {
-    color: var(--main-color);
-}
-
-.lastOnline__skeleton {
-    border-radius: 0.3em;
-    height: 1.9em;
-    animation: skeleton-loading 0.5s ease-in-out infinite alternate;
-}
-
-.lastOnline__skeleton > * {
-    display: none;
-}
-
 .messages {
     display: flex;
     flex-direction: column;

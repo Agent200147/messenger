@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     column-gap: 0.7em;
-    padding: 1.9em 3.5em;
+    padding: 1.75em 3.5em;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -26,7 +26,6 @@
 .searchInput:focus-within svg path {
     fill-opacity: 1;
 }
-
 
 .searchInput input {
     font-size: 1.6em;

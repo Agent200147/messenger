@@ -62,7 +62,7 @@ const UserModel = (sequelize, DataTypes) => {
         lastOnline: DataTypes.DATE,
     }, {
         sequelize,
-        createdAt: false,
+        createdAt: true,
         updatedAt: false
     })
     User.associate = (models) => {

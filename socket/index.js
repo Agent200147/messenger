@@ -95,6 +95,27 @@ io.on('connection', (socket) => {
         io.emit('get-remove-online-user', userId)
     })
 
+    socket.on('draw-to-recipient', ({recipientId, x, y}) => {
+        const user = onlineUsers.find((u) => u.userId === recipientId)
+        if(user) {
+            io.to(user.socketId).emit('get-recipient-draw', {x, y})
+        }
+    })
+
+    socket.on('end-draw-to-recipient', (recipientId) => {
+        const user = onlineUsers.find((u) => u.userId === recipientId)
+        if(user) {
+            io.to(user.socketId).emit('get-end-recipient-draw')
+        }
+    })
+
+    socket.on('typing-trigger', (recipientId) => {
+        const user = onlineUsers.find((u) => u.userId === recipientId)
+        if(user) {
+            io.to(user.socketId).emit('get-typing-trigger')
+        }
+    })
+
     let offlineTimeOut
     socket.on("disconnect", (reason) => {
         // offlineTimeOut = setTimeout(() => {
