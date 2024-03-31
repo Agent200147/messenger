@@ -9,7 +9,7 @@ import Moment from "react-moment";
 import 'moment-timezone';
 import 'moment/locale/ru';
 
-import {selectCurrentChat, selectOnlineUsers, selectTypingTrigger, selectUserChats} from "@/store/slices/chatSlice";
+import { selectCurrentChat } from "@/store/slices/chatSlice";
 import Image from "next/image";
 import avatarImg from '@/public/img/avatar.svg'
 import MessageInput from "@/components/MessageInput/MessageInput";
@@ -63,7 +63,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     const unReadMessages = unReadMessagesStore !== undefined ? unReadMessagesStore : unReadMessagesFromServer
     const prevContainerHeightRef = useRef<number>(0)
 
-    console.log('typingTrigger: ChatBox')
+    // console.log('typingTrigger: ChatBox')
 
     useCustomObserver(firstMessageRef,  async () => {
         if (!hasAdditionalMessages) {
@@ -105,7 +105,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     useLayoutEffect(() => {
         if (!additionalMessages || !scrollRefContainer.current) return
         const heightDifference = scrollRefContainer.current.scrollHeight - prevContainerHeightRef.current
-        console.log('heightDifference', scrollRefContainer.current.scrollTop, scrollRefContainer.current.scrollHeight)
+        // console.log('heightDifference', scrollRefContainer.current.scrollTop, scrollRefContainer.current.scrollHeight)
 
         scrollRefContainer.current.scrollTop = scrollRefContainer.current.scrollTop + heightDifference
 
@@ -131,7 +131,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
             <div className={styles.messages} ref={scrollRefContainer}>
                 <div className={styles.messagesWrapper}>
                     {messages?.map((msg, index) => {
-                        if(index === 0) console.log('messages render')
+                        // if(index === 0) console.log('messages render')
                         const {id, senderId, text, createdAt} = msg;
                         const messageNumberReverse = messages.length - (index + 1)
                         const selfMessage = senderId !== recipient.id

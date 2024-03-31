@@ -4,6 +4,7 @@ import userModel from "../Models/userModel.js";
 import messageModel from "../Models/messageModel.js";
 import user_ChatModel from "../Models/user_ChatModel.js";
 import models from '../Models/index.js';
+import fs from "fs";
 
 const {ChatModel, UserModel, MessageModel, User_ChatModel} = models
 export const createChat = async (req, res) => {
@@ -83,7 +84,7 @@ export const createChat = async (req, res) => {
 }
 
 export const findUserChats = async (req, res) => {
-    const userId = req.params.userId
+    const userId = req.user.id
     try {
         const chats = await ChatModel.findAll({where: {members: {[Op.like]: '%' + userId + '%'}}})
         res.status(200).json(chats)
@@ -102,6 +103,34 @@ export const findChat = async (req, res) => {
         console.log(error)
         res.status(500).json(error)
     }
+}
+
+export const canvas = async (req, res) => {
+    const userId = req.user.id
+    const { chatId, image } = req.body
+    const base64Data = image.replace(/^data:image\/png;base64,/, '')
+    const buffer = Buffer.from(base64Data, 'base64')
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    console.log({userId,
+        chatId})
+    const user_chat = await User_ChatModel.findOne({
+        where: {
+            userId,
+            chatId
+        }
+
+    })
+    if(!user_chat) return res.status(400).json()
+    const path = user_chat.canvasImage ? `canvas/${user_chat.canvasImage}` : `canvas/${uniqueSuffix}.png`
+    fs.writeFile(path, buffer, 'base64', (err) => {
+        if (err) {
+            console.error('Ошибка при сохранении изображения:', err)
+            res.status(500).json()
+        } else {
+            !user_chat.canvasImage && user_chat.update({ canvasImage: `${uniqueSuffix}.png` })
+            res.status(200).json('Изображение успешно сохранено на сервере')
+        }
+    })
 }
 
 export const findUserChatsAndRecipients = async (req, res) => {
@@ -129,7 +158,7 @@ export const findUserChatsAndRecipients = async (req, res) => {
             const chatId = chat.get('chatId')
             const recipientInfo = await User_ChatModel.findOne({
                 where: { chatId, userId: {[Op.not]: userId} },
-                attributes: ['unReadMessages'],
+                attributes: ['unReadMessages', 'canvasImage'],
                 include: [
                     {
                         model: UserModel,

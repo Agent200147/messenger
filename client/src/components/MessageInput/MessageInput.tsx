@@ -6,24 +6,24 @@ import {useDispatch, useSelector} from "react-redux";
 import {selectUser} from "@/store/slices/authSlice";
 import {useSendMessageMutation} from "@/api/messages/messgesApi";
 import {selectCurrentChat, sendTypingTrigger} from "@/store/slices/chatSlice";
+import {SocketEmitEvent} from "@/store/middleware/socket.middleware";
+import SocketFactory from "@/socket/socket";
 type MessageInputProps = {
     currentChatId: string,
 }
 const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
-    const dispatch = useDispatch()
     const [messageText, setMessageText] = useState<string>('')
     const [active, setActive] = useState<boolean>(false)
     const currentChat = useSelector(selectCurrentChat)
     const recipientId = currentChat?.recipientInfo.user.id
     const user = useSelector(selectUser)
+    const socket = SocketFactory.create()
     const onChangeMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.value) setActive(false)
         else setActive(true)
         setMessageText(e.target.value)
-        if (recipientId) dispatch(sendTypingTrigger(recipientId))
+        if (recipientId) socket.socket.emit(SocketEmitEvent.TypingTrigger, {chatId: currentChat.chatId, recipientId})
     }
-
-
 
     const [sendTextMessage] = useSendMessageMutation()
     const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {

@@ -3,7 +3,7 @@ import {
     createChat,
     findUserChats,
     findChat,
-    findUserChatsAndRecipients, readChatMessages, findUserPotentialChats
+    findUserChatsAndRecipients, readChatMessages, findUserPotentialChats, canvas
 } from "../Controllers/ChatController.js";
 import { checkAuth } from "../Controllers/UserController.js";
 
@@ -14,6 +14,6 @@ router.post("/read", checkAuth, readChatMessages)
 router.get("/potential", checkAuth, findUserPotentialChats)
 router.get("/:userId", checkAuth, findUserChatsAndRecipients)
 router.get("/find/:firstId/:secondId", checkAuth, findChat)
-// router.post("/findAll/:userId", findAllInfo)
+router.post("/canvas", checkAuth, canvas)
 
 export default router

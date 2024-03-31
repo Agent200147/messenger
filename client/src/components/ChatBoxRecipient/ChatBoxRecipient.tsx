@@ -3,18 +3,24 @@ import styles from "./chatBoxRecipient.module.css";
 import Image from "next/image";
 import avatarImg from "@/public/img/avatar.svg";
 import Moment from "react-moment";
-import {useSelector} from "react-redux";
-import {selectCurrentChat, selectOnlineUsers, selectTypingTrigger} from "@/store/slices/chatSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    selectCurrentChat,
+    selectOnlineUsers,
+} from "@/store/slices/chatSlice";
 import {UserInChatType} from "@/Models/User/userModel";
+import {SocketOnEvent} from "@/store/middleware/socket.middleware";
+import SocketFactory from "@/socket/socket";
 
 type ChatBoxRecipientProps = {
     recipient: UserInChatType
 }
 const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     const [isTyping, setIsTyping] = useState(false)
-    const typingTrigger = useSelector(selectTypingTrigger)
     const onlineUsers = useSelector(selectOnlineUsers)
+    const currentChat = useSelector(selectCurrentChat)
     const isOnlineRecipient = onlineUsers.find(userId => userId === recipient.id)
+    const socket = SocketFactory.create()
     const calendarStrings = {
         lastDay : '[вчера, в] LT',
         sameDay : '[сегодня, в] LT',
@@ -23,14 +29,25 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     }
 
     useEffect(() => {
-        console.log('typingTrigger', typingTrigger)
-        setIsTyping(true)
-        const timeout = setTimeout(() => setIsTyping(false), 3000)
+        if(!currentChat) return
+        let timeout: ReturnType<typeof setTimeout>
+        socket.socket.on(SocketOnEvent.GetTypingTrigger, (chatId) => {
+            if (chatId !== currentChat.chatId) return
+            setIsTyping(true)
+            if (timeout) {
+                clearTimeout(timeout)
+            }
+
+            timeout = setTimeout(() => setIsTyping(false), 1500)
+        })
 
         return () => {
-            clearTimeout(timeout)
+            socket.socket.off(SocketOnEvent.GetTypingTrigger)
+            if (timeout) {
+                clearTimeout(timeout)
+            }
         }
-    }, [typingTrigger])
+    }, [currentChat])
     return (
         <div className={styles.recipientInfo}>
             <div className={styles.avatarWrapper}>

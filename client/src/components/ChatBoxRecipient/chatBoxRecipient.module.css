@@ -93,3 +93,12 @@
     }
 
 }
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: rgba(147, 147, 147, 0.3);
+    }
+    100% {
+        background-color: rgba(206, 206, 206, 0.3);
+    }
+}

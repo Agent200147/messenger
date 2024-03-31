@@ -77,17 +77,10 @@ export const loginUser = async (req, res: Response) => {
         const isValidPassword = await bcrypt.compare(password, user.password)
         if(!isValidPassword) return res.status(400).json('Неверный логин или пароль')
 
-        // const token = createToken(user.id)
-
         const token = createToken(user.dataValues)
-        // const decodedUser = jwt.decode(token)
-        // console.log('decodedUser', decodedUser)
-
-        // res.cookie('auth', {id: user.id, name: user.name, secondName: user.secondName, email, token}, options)
-        // res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email, token})
 
         res.cookie('auth', token, options)
-        res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email, token})
+        res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email})
     } catch (e) {
         console.log(e)
         res.status(500).json('Непредвиденная ошибка на сервере')
@@ -140,21 +133,15 @@ export const currentUser = async (req, res, next) => {
 
 export const checkAuth = async (req, res, next) => {
     try {
-        // let token = req.headers.authorization?.split(" ")[1];
-        // let token = req.cookies?.auth
         const token = req.cookies?.auth
-        // console.log('checkAuth1:', req.cookies)
-
-        // console.log(token)
-        // console.log('TOKENfff:', req.cookies)
-        const decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY)
 
         const user = await UserModel.findByPk(decodedUser.id, {
             attributes: {exclude: ['password']}
         })
 
         if (!user) {
-            res.status(401).json({ message: 'Не авторизован' });
+            res.status(401).json({ message: 'Не авторизован' })
         }
         if (user.avatar !== decodedUser.avatar) {
             console.log('miss')
@@ -165,7 +152,7 @@ export const checkAuth = async (req, res, next) => {
         req.user = user
         next()
     } catch (error) {
-        res.status(401).json({ message: 'Не авторизован' });
+        res.status(401).json({ message: 'Не авторизован' })
     }
 };
 
@@ -245,7 +232,7 @@ export const setLastOnline = async (req, res) => {
         // res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
         res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
     }
-};
+}
 
 
 

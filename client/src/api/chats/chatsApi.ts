@@ -15,7 +15,15 @@ export const chatApi = api.injectEndpoints({
                 body: { recipientId }
             })
         }),
+
+        setCanvasImage: builder.mutation<unknown, {image: string, chatId: number}>({
+            query: ({image, chatId}) => ({
+                url: `/chats/canvas`,
+                method: "POST",
+                body: { image, chatId }
+            })
+        }),
     }),
 });
 
-export const { useGetChatsMutation, useCreateChatMutation } = chatApi;
+export const { useGetChatsMutation, useCreateChatMutation, useSetCanvasImageMutation } = chatApi;

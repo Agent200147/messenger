@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
         cb(null, 'userAvatarPhotos/'); // Папка, куда сохранять файлы
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
         cb(null, uniqueSuffix + path.extname(file.originalname)); // Уникальное имя файла
     }
 })

@@ -19,6 +19,13 @@ const nextConfig = {
                 port: '8000',
                 pathname: '/userAvatarPhotos/**',
             },
+
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8000',
+                pathname: '/canvas/**',
+            },
         ],
     },
 };

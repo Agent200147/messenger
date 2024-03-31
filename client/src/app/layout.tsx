@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import 'react-toastify/dist/ReactToastify.css'
 import "./reset.css";
 import Header from "@/components/Header/Header";
 import MainProvider from "@/providers/index";

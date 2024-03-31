@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import type { FC } from "react";
 import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";

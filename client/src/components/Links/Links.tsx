@@ -16,7 +16,7 @@ import cn from "classnames";
 export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
     const router = useRouter()
     const pathname = usePathname()
-    console.log('AuthLinks render')
+    // console.log('AuthLinks render')
     // const currentUrl = router
     // console.log(user)
     return (

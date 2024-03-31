@@ -17,9 +17,8 @@ interface InitialState {
     newChat: Nullable<ChatTypeWithFullInfo>,
     onlineUsers: number[],
     notifications: NotificationType[],
-    recipientCanvas: any,
-    typingTrigger: boolean,
-    isDrawingRecipient: boolean
+    recipientCanvas: Nullable<{ chatId: number, x: number, y: number }>,
+    isDrawingRecipient: boolean,
 }
 
 const initialState: InitialState = {
@@ -29,8 +28,7 @@ const initialState: InitialState = {
     onlineUsers: [],
     notifications: [],
     recipientCanvas: null,
-    typingTrigger: false,
-    isDrawingRecipient: false
+    isDrawingRecipient: false,
 }
 
 const findChatById = (state:  Draft<InitialState>, chatId: number) => state.chats?.find(chat => chat.chatId === chatId)
@@ -62,14 +60,14 @@ const slice = createSlice({
 
         addNewOnlineUser: (state, action) => {
             state.onlineUsers.push(action.payload)
-            console.log('addNewOnlineUser')
+            // console.log('addNewOnlineUser')
         },
 
         removeOnlineUser: (state, action) => {
             state.onlineUsers = state.onlineUsers.filter(userId => userId !== action.payload)
             if (state.currentChat && state.currentChat.recipientInfo.user.id === action.payload) {
                 state.currentChat.recipientInfo.user.lastOnline = (new Date()).toString()
-                console.log('removeOnlineUser')
+                // console.log('removeOnlineUser')
             }
 
         },
@@ -113,13 +111,6 @@ const slice = createSlice({
             chat.unReadMessages++
         },
 
-        sendTypingTrigger: (state, action) => {
-            return
-        },
-
-        getTypingTrigger: (state) => {
-            state.typingTrigger = !state.typingTrigger
-        },
 
         setRecipientCanvas: (state, action) => {
             state.recipientCanvas = action.payload
@@ -135,7 +126,7 @@ const slice = createSlice({
 
         setIsRecipientDrawing: (state, action) => {
             state.isDrawingRecipient = action.payload
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -158,7 +149,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers, addNewOnlineUser, removeOnlineUser, setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead, setRecipientCanvas, sendTypingTrigger, getTypingTrigger, drawToRecipient, endDrawToRecipient, setIsRecipientDrawing } = slice.actions;
+export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers, addNewOnlineUser, removeOnlineUser, setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead, setRecipientCanvas, drawToRecipient, endDrawToRecipient, setIsRecipientDrawing } = slice.actions;
 
 export const selectUserChats = (state: RootState) => state.chats.chats
 export const selectCurrentChat = (state: RootState) => state.chats.currentChat
@@ -166,5 +157,4 @@ export const selectNewChat = (state: RootState) => state.chats.newChat
 export const selectOnlineUsers = (state: RootState) => state.chats.onlineUsers
 export const selectRecipientCanvas = (state: RootState) => state.chats.recipientCanvas
 export const selectIsDrawingRecipient = (state: RootState) => state.chats.isDrawingRecipient
-export const selectTypingTrigger = (state: RootState) => state.chats.typingTrigger
 export const selectNotifications = (state: RootState) => state.chats.notifications

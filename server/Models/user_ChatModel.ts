@@ -30,7 +30,12 @@ const User_ChatModel = (sequelize, DataTypes) => {
         unReadMessages: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-        }
+        },
+        canvasImage: {
+            type: DataTypes.STRING,
+            required: false,
+            allowNull: true
+        },
     }, {
         sequelize,
         createdAt: true,

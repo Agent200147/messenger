@@ -1,4 +1,4 @@
-import express, { type Express, type Request, type Response} from "express";
+import express, { type Express } from "express";
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
 import {Server} from "socket.io";
@@ -14,11 +14,10 @@ import userRoute from './Routes/userRoute.js';
 import chatRoute from './Routes/chatRoute.js';
 import messageRoute from './Routes/messageRoute.js';
 import fileUoload from 'express-fileupload'
-import User_Chat from "./Models/user_ChatModel.js";
 import models from './Models/index.js';
 import path from "path";
 import {fileURLToPath} from "url";
-const { MessageModel, sequelize } = models
+const { MessageModel, User_ChatModel, sequelize } = models
 // -------------------------------------
 const app: Express = express()
 // const { sequelize } = models
@@ -37,16 +36,22 @@ const __dirname = path.dirname(__filename);
 console.log(__dirname)
 
 app.use('/userAvatarPhotos', express.static(path.join(__dirname, 'userAvatarPhotos')));
+app.use('/canvas', express.static(path.join(__dirname, 'canvas')));
 app.use('/api/users', userRoute)
 app.use('/api/chats', chatRoute)
 app.use('/api/messages', messageRoute)
 
 // User_Chat.sync({ alter: true })
-// sequelize.sync({ alter: true })
+sequelize.sync({ alter: true })
 
 const PORT = process.env.PORT
 
+const initial = async () => {
+    const canvas = await User_ChatModel.findAll()
+    canvas.forEach(canvas => canvas.update({canvasImage: null}))
+}
 
+// initial()
 // app.get('/', (req, res) => {
 //     res.send('Hi')
 // })

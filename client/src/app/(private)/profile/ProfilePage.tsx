@@ -16,7 +16,7 @@ import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
 import CancelSvg from "@/components/SvgComponents/CancelSvg";
 import {useUploadAvatarMutation} from "@/api/user/usersApi";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import CustomToast from "@/components/CustomToast/CustomToast";
 import avatarImg from "@/public/img/avatar.svg";
 import {revalidatePath} from "next/cache";

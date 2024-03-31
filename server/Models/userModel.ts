@@ -19,13 +19,6 @@ import User_Chat from "./user_ChatModel.js";
 
 const UserModel = (sequelize, DataTypes) => {
     const User = sequelize.define('user', {
-        // Model attributes are defined here
-        // id: {
-        //     type: DataTypes.INTEGER,
-        //     autoIncrement: true,
-        //     primaryKey: true
-        // },
-
         email: {
             type: DataTypes.STRING,
             required: true,

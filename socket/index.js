@@ -90,29 +90,36 @@ io.on('connection', (socket) => {
     })
 
     socket.on('remove-online-user', (userId) => {
-        console.log('remove-online-user', userId)
+        // console.log('remove-online-user', userId)
         onlineUsers = onlineUsers.filter((u) => u.socketId !== socket.id)
         io.emit('get-remove-online-user', userId)
     })
 
-    socket.on('draw-to-recipient', ({recipientId, x, y}) => {
+    socket.on('draw-to-recipient', ({chatId, recipientId, x, y}) => {
         const user = onlineUsers.find((u) => u.userId === recipientId)
         if(user) {
-            io.to(user.socketId).emit('get-recipient-draw', {x, y})
+            io.to(user.socketId).emit('get-recipient-draw', {chatId, x, y})
         }
     })
 
-    socket.on('end-draw-to-recipient', (recipientId) => {
+    socket.on('end-draw-to-recipient', ({chatId, recipientId}) => {
         const user = onlineUsers.find((u) => u.userId === recipientId)
         if(user) {
-            io.to(user.socketId).emit('get-end-recipient-draw')
+            io.to(user.socketId).emit('get-end-recipient-draw', chatId)
         }
     })
 
-    socket.on('typing-trigger', (recipientId) => {
+    socket.on('typing-trigger', ({chatId, recipientId}) => {
         const user = onlineUsers.find((u) => u.userId === recipientId)
         if(user) {
-            io.to(user.socketId).emit('get-typing-trigger')
+            io.to(user.socketId).emit('get-typing-trigger', chatId)
+        }
+    })
+
+    socket.on('clear-canvas', ({chatId, recipientId}) => {
+        const user = onlineUsers.find((u) => u.userId === recipientId)
+        if(user) {
+            io.to(user.socketId).emit('get-clear-canvas', chatId)
         }
     })
 

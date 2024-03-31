@@ -11,11 +11,13 @@ import {Nullable} from "@/utils/typeUtils";
 export type ChatTypeWithFullInfo =  {
     chatId: number,
     unReadMessages: number,
+    canvasImage: Nullable<string>
     chat: {
         createdAt: string,
     }
     recipientInfo: {
         unReadMessages: number,
+        canvasImage: Nullable<string>,
         user: UserInChatType
     },
     lastMessage: Nullable<MessageType>
