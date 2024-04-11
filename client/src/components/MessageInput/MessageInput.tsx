@@ -5,7 +5,7 @@ import SendButton from "@/components/MessageInput/SendButton";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUser} from "@/store/slices/authSlice";
 import {useSendMessageMutation} from "@/api/messages/messgesApi";
-import {selectCurrentChat, sendTypingTrigger} from "@/store/slices/chatSlice";
+import { selectCurrentChat } from "@/store/slices/chatSlice";
 import {SocketEmitEvent} from "@/store/middleware/socket.middleware";
 import SocketFactory from "@/socket/socket";
 type MessageInputProps = {

@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse  } from "next/server";
 import { getIsAuth } from "@/utils";
 import {Routes} from "@/Routes/routes";
-const privateRoutes = [Routes.INDEX, Routes.PROFILE];
+const privateRoutes = [Routes.INDEX, Routes.PROFILE, Routes.USERS];
 const publicRoutes = [Routes.LOGIN, Routes.REGISTER, Routes.SERVER_ERROR];
 
 

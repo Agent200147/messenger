@@ -14,6 +14,7 @@ import SearchInput from "@/components/SearchInput/SearchInput";
 import {useGetChatsMutation} from "@/api/chats/chatsApi";
 import {useParams} from "next/navigation";
 import {log} from "node:util";
+import cn from 'classnames';
 
 type ChatsProps = {
     preloadedChats: ChatTypeWithFullInfo[]
@@ -58,8 +59,8 @@ const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
         setUserChats(filteredChats)
     }
     return (
-        <div className={styles.wrapper}>
-            <SearchInput onChange={handleSearchInput}/>
+        <div className={cn([styles.wrapper, !currentChatId && styles.closed])}>
+            <SearchInput closed={!currentChatId} onChange={handleSearchInput}/>
             {
                 // !!userChats?.length || isEmptySearchResult ? userChats.map(chat => <ChatItem key={chat.chatId} chat={chat} />)
                 //     : !!preloadedChats?.length && preloadedChats.map(chat => <ChatItem key={chat.chatId} chat={chat} />)
@@ -67,8 +68,8 @@ const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
                 chats && chats?.toSorted((a, b) => {
                     if (!a?.lastMessage) return -1
                     if (!b?.lastMessage) return 1
-                    return new Date(b?.lastMessage?.createdAt) - new Date(a?.lastMessage?.createdAt)
-                }).map(chat => <ChatItem key={chat.chatId} isActiveChat={Number(currentChatId) === chat.chatId} chat={chat} />)
+                    return +new Date(b?.lastMessage?.createdAt) - +new Date(a?.lastMessage?.createdAt)
+                }).map(chat => <ChatItem key={chat.chatId} closed={!currentChatId} isActiveChat={Number(currentChatId) === chat.chatId} chat={chat} />)
 
                 // userChats?.map((chat, index) => <ChatItem key={chat.id} chat={chat} />)
 

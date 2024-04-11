@@ -80,7 +80,7 @@ export const loginUser = async (req, res: Response) => {
         const token = createToken(user.dataValues)
 
         res.cookie('auth', token, options)
-        res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email})
+        res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email, avatar: user.avatar})
     } catch (e) {
         console.log(e)
         res.status(500).json('Непредвиденная ошибка на сервере')

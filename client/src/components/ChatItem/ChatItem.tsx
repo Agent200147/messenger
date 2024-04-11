@@ -16,13 +16,15 @@ import { selectOnlineUsers, setCurrentChat } from "@/store/slices/chatSlice";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
 import { setNewMessage } from "@/store/slices/messageSlice"
 import { Routes } from "@/Routes/routes"
+import {useParams} from "next/navigation";
 
 type ChatItemProps = {
+    closed: boolean,
     chat: ChatTypeWithFullInfo,
     isActiveChat: boolean,
 }
 
-const ChatItem: FC<ChatItemProps> = ({ chat, isActiveChat }) => {
+const ChatItem: FC<ChatItemProps> = ({ closed, chat, isActiveChat }) => {
     const dispatch = useDispatch()
     // const router = useRouter()
     const { recipientInfo, lastMessage } = chat
@@ -40,9 +42,9 @@ const ChatItem: FC<ChatItemProps> = ({ chat, isActiveChat }) => {
 
     return (
         // <Link href={`?chatId=${chat.id}`}  className={cn([styles.chatItem, isActiveChat && styles.chatItemActive]) } >
-        <Link href={`${Routes.CHATS}/${chat.chatId}`} className={cn([styles.chatItem, isActiveChat && styles.chatItemActive])}>
+        <Link href={`${Routes.CHATS}/${chat.chatId}`} className={cn([styles.chatItem, isActiveChat && styles.chatItemActive, closed && styles.closed])}>
             <div className={styles.avatarWrapper}>
-                <Image fill className={styles.avatar} src={ recipient.avatar ? `http://localhost:8000/${recipient.avatar}` : avatarImg}
+                <Image fill className={styles.avatar} src={ recipient.avatar ? `${process.env.SERVER_URL}/${recipient.avatar}` : avatarImg}
                        alt={'Аватарка'}/>
                 <div className={isOnlineRecipient ? (isActiveChat ? styles.onlineStatusActive : styles.onlineStatus) : ''}></div>
             </div>

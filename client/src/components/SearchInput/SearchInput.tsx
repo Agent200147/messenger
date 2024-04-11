@@ -3,12 +3,14 @@ import type {FC, InputHTMLAttributes} from "react";
 import Image from "next/image";
 import searchIcon from '@/public/search.svg'
 import SearchSvg from "@/components/SvgComponents/SearchSvg";
+import cn from 'classnames';
 type SearchInputProps = {
+    closed: boolean,
     onChange: (value: string) => void
 }
-const SearchInput: FC<SearchInputProps> = ({ onChange }) => {
+const SearchInput: FC<SearchInputProps> = ({ closed, onChange }) => {
     return (
-        <div className={styles.searchInput}>
+        <div className={cn([styles.searchInput, closed && styles.closed]) }>
             <div className={styles.searchInputWrapper}>
                 <SearchSvg/>
             </div>

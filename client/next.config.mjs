@@ -1,11 +1,11 @@
 /*/** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: false,
-    logging: {
-        fetches: {
-            fullUrl: true
-        }
-    },
+    // logging: {
+    //     fetches: {
+    //         fullUrl: true
+    //     }
+    // },
     env: {
         SERVER_URL: 'http://localhost:8000',
         API_URL: 'http://localhost:8000/api',

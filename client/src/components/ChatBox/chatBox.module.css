@@ -1,11 +1,13 @@
 .wrapper {
+    position: relative;
+
     font-size: 1rem;
     display: flex;
     flex-direction: column;
     /*flex-basis: 58%;*/
     flex-grow: 1;
     height: calc(100vh - var(--header-height));
-    border-right: 1px solid var(--border-color);
+    /* border-right: 1px solid var(--border-color); */
 
     overflow-x: hidden;
     /*overflow-y: auto;*/
@@ -35,8 +37,67 @@
     /*flex-grow: 1;*/
     /*padding: 1.5em 2em;*/
 
+
     scrollbar-width: thin;
     scrollbar-color: var(--main-color) transparent;
+}
+
+.chatDate {
+    position: absolute;
+    align-self: center;
+
+    font-size: 1.6em;
+
+    padding: 0.7em;
+    background: var(--main-color-dark);
+    color: whitesmoke;
+
+    z-index: 1;
+
+    border-radius: 0.3em;
+    transform: translateY(-4em);
+
+    -webkit-transition: transform 0.2s ease-in-out;
+    -moz-transition: transform 0.2s ease-in-out;
+    -o-transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
+    /*animation: fade-in3 0.3s ease-in-out forwards;*/
+}
+
+.chatDateShow {
+    transform: translateY(0);
+}
+
+.messageDateWrapper {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    column-gap: 1em;
+    width: 30%;
+}
+
+.messageDateWrapper span {
+    flex-grow: 1;
+    height: 1px;
+    background: var(--border-color);
+    /*opacity: 0.4;*/
+    animation: fade-in-span 0.3s ease-in-out forwards;
+}
+
+.messageDateWrapper span:nth-child(1) {
+    animation: fade-in-span-left 0.3s ease-in-out forwards;
+}
+
+.messageDateWrapper span:nth-child(3) {
+    animation: fade-in-span-right 0.3s ease-in-out forwards;
+}
+
+
+.messageDate {
+    font-size: 1.6em;
+
+    color: var(--main-color);
+    animation: fade-in3 0.3s ease-in-out forwards;
 }
 
 .messages::-webkit-scrollbar {
@@ -158,6 +219,42 @@
     100% {
         /*transform: scale(1);*/
         transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in-span-left {
+    0% {
+        /*transform: scale(0.95);*/
+        transform: translate(-6.5em, 0.5em);
+        opacity: 0;
+    }
+
+    /*50% {*/
+    /*    opacity: 0;*/
+    /*}*/
+
+    100% {
+        /*transform: scale(1);*/
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in-span-right {
+    0% {
+        /*transform: scale(0.95);*/
+        transform: translate(6.5em, 0.5em);
+        opacity: 0;
+    }
+
+    /*50% {*/
+    /*    opacity: 0;*/
+    /*}*/
+
+    100% {
+        /*transform: scale(1);*/
+        transform: translateX(0);
         opacity: 1;
     }
 }

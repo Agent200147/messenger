@@ -17,7 +17,7 @@ const deleteBySocketId = function (userId) {
 Array.prototype.deleteBySocketId = deleteBySocketId
 
 io.on('connection', (socket) => {
-    console.log('new connection', socket.id)
+    // console.log('new connection', socket.id)
 
     socket.on('newUser', (userId) => {
         if (!onlineUsers.some((user) => user.userId === userId)) {
@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
     socket.on('send-message', (message) => {
         const user = onlineUsers.find((u) => u.userId === message.recipientId)
         // console.log(message)
-        console.log(message, user)
+        // console.log(message, user)
 
         if (!user) return
         // console.log(user)
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('read-messages', ({ chatId, recipientId }) => {
-        console.log({ chatId, recipientId })
+        // console.log({ chatId, recipientId })
 
         const user = onlineUsers.find((u) => u.userId === recipientId)
         // console.log('read-messages: ', chatId, recipientId, user)

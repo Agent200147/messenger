@@ -1,9 +1,14 @@
 .recipientInfo {
+    position: relative;
     padding: 0.7em 2em;
+
+    background: var(--black);
+
     display: flex;
     align-items: center;
     column-gap: 1.5em;
     border-bottom: 1px solid var(--border-color);
+    z-index: 2;
 }
 
 .avatarWrapper {

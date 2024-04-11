@@ -42,7 +42,7 @@ app.use('/api/chats', chatRoute)
 app.use('/api/messages', messageRoute)
 
 // User_Chat.sync({ alter: true })
-sequelize.sync({ alter: true })
+// sequelize.sync({ alter: true })
 
 const PORT = process.env.PORT
 

@@ -3,18 +3,24 @@
 }
 
 .chatItem, .chatItem__skeleton {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 1.5em 2em;
     border-bottom: 1px solid var(--border-color);
     cursor: pointer;
 
-    -webkit-transition: all 0.1s linear;
-    -moz-transition: all 0.1s linear;
-    -o-transition: all 0.1s linear;
-    transition: all 0.1s linear;
+    -webkit-transition: background 0.1s linear;
+    -moz-transition: background 0.1s linear;
+    -o-transition: background 0.1s linear;
+    transition: background 0.1s linear;
 }
 .chatItem {
+    /*animation: fade-in 0.3s linear forwards;*/
+}
+
+.chatItem:not(.closed):active {
+    background: var(--main-color-dark);
     /*animation: fade-in 0.3s linear forwards;*/
 }
 
@@ -106,7 +112,7 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: 1em 1.5em;
+    padding-inline: 1.5em;
     row-gap: 0.5em;
 }
 
@@ -209,4 +215,20 @@
 .yourMessage {
     color: white;
     font-weight: 500;
+}
+
+.closed .chatMain, .closed .readCheckMarkWrapper, .closed .notReadCheckMarkWrapper {
+    display: none;
+}
+
+.closed .notification {
+    position: absolute;
+
+    outline: 0.3em solid var(--black);
+    right: -12%;
+    top: 7%;
+}
+
+.closed.chatItem {
+    padding-inline: 0;
 }

@@ -53,7 +53,7 @@ const PotentialChats = ({ userChatsServer, potentialChats }) => {
                             <div className={styles.potentialChat} key={potentialUser?.id}>
                                 <div className={styles.avatarWrapper}>
                                     <Image fill className={styles.avatar}
-                                           src={potentialUser.avatar ? `http://localhost:8000/${potentialUser.avatar}` : avatarImg}
+                                           src={potentialUser.avatar ? `${process.env.SERVER_URL}/${potentialUser.avatar}` : avatarImg}
                                            alt={'Аватарка'}/>
                                     <div className={isOnlineUser ? styles.onlineStatus : ''}></div>
                                 </div>
