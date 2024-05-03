@@ -129,12 +129,13 @@
 .recipientUser {
     font-size: 1.8em;
     font-weight: 500;
-    color: white;
+    color: var(--white);
 
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+    word-break: break-all;
 }
 
 .recipientUser__skeleton {
@@ -160,6 +161,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+    word-break: break-all;
 }
 
 .lastMessage__skeleton {
@@ -174,18 +176,27 @@
 
     color: var(--black);
 
-    width: calc(2.8em / var(--notification-ratio));
-    aspect-ratio: 1 / 1;
-
+    min-width: calc(2.8em / var(--notification-ratio));
+    height: calc(2.8em / var(--notification-ratio));
 
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
 
-    border-radius: 50%;
     background: var(--main-color);
+
+    aspect-ratio: auto;
+    padding-inline: calc(0.8em / var(--notification-ratio));
+    border-radius: 2.8em;
 }
+
+/*.notificationExpanded {*/
+/*    aspect-ratio: auto;*/
+/*    padding-inline: calc(0.8em / var(--notification-ratio));*/
+/*    height: calc(2.8em / var(--notification-ratio));*/
+/*    border-radius: 10em;*/
+/*}*/
 
 .notification__skeleton {
     margin-left: auto;
@@ -213,7 +224,7 @@
 }
 
 .yourMessage {
-    color: white;
+    color: var(--white);
     font-weight: 500;
 }
 

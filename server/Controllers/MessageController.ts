@@ -6,7 +6,6 @@ import {Op} from "sequelize";
 const {MessageModel, ChatModel, UserModel, User_ChatModel, Sequelize} = models
 export const createMessage = async (req, res) => {
     const { chatId, senderId, text } = req.body
-
     try {
         const message = await MessageModel.create({chatId, senderId, text})
         if (message) {
@@ -20,10 +19,12 @@ export const createMessage = async (req, res) => {
     }
 }
 
+const MESSAGES_LIMIT = 33
+
 export const getChatMessagesAndRecipient = async (req, res) => {
     const { chatId } = req.params
     const user = req.user
-    console.log('-----------------')
+    // console.log('-----------------')
     try {
         const user_chat = await User_ChatModel.findOne({
             where: {
@@ -56,7 +57,7 @@ export const getChatMessagesAndRecipient = async (req, res) => {
                     model: MessageModel,
                     // offset: 0,
                     order: [['createdAt', 'DESC']],
-                    limit: 20,
+                    limit: MESSAGES_LIMIT,
                 },
                 {
                     model: UserModel,

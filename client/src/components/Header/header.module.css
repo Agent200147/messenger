@@ -12,6 +12,11 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.headerNonAuth {
+    display: flex;
+    justify-content: space-between;
+}
+
 .logo {
     font-size: 3.2em;
     font-weight: 700;

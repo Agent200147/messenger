@@ -6,6 +6,13 @@ const nextConfig = {
     //         fullUrl: true
     //     }
     // },
+    // experimental: {
+    //     staleTimes: {
+    //         dynamic: 10,
+    //         static: 60
+    //     }
+    // },
+
     env: {
         SERVER_URL: 'http://localhost:8000',
         API_URL: 'http://localhost:8000/api',

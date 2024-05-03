@@ -10,14 +10,21 @@ import {useCreateChatMutation} from "@/api/chats/chatsApi";
 import {toast} from "react-toastify";
 import CustomToast from "@/components/CustomToast/CustomToast";
 import {selectUser} from "@/store/slices/authSlice";
-import {useEffect, useLayoutEffect, useState} from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import type { FC } from "react";
 import {useRouter} from "next/navigation";
 import {Routes} from "@/Routes/routes";
 import SendButtonSvg from "@/components/SvgComponents/sendButton.svg";
 import Moment from "react-moment";
-import TestParentcomponent from "@/components/testParentcomponent";
-const PotentialChats = ({ userChatsServer, potentialChats }) => {
-    const user = useSelector(selectUser)
+import {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
+import {UserInChatType} from "@/Models/User/userModel";
+
+type PotentialChatsProps = {
+    userChatsServer: ChatTypeWithFullInfo[],
+    potentialChats: UserInChatType[]
+}
+
+const PotentialChats: FC<PotentialChatsProps> = ({ userChatsServer, potentialChats }) => {
     const router = useRouter()
     const userChatsStore = useSelector(selectUserChats)
     const userChats = !!userChatsStore.length ? userChatsStore : userChatsServer
@@ -28,20 +35,15 @@ const PotentialChats = ({ userChatsServer, potentialChats }) => {
     //     setFilteredPotentialChats(potentialChats.filter(user => !existingUserIds.has(user.id)))
     // }, [userChats])
     const existingUserIds = new Set(userChats?.map(userChat => userChat.recipientInfo.user.id))
-    // setFilteredPotentialChats(potentialChats.filter(user => !existingUserIds.has(user.id)))
     const filteredPotentialChats = potentialChats.filter(user => !existingUserIds.has(user.id))
     const onlineUsers = useSelector(selectOnlineUsers)
     const [ createChat ] = useCreateChatMutation()
     const createNewChat = async (recipientId: number ) => {
         try {
             const response = await createChat(recipientId).unwrap()
-            // console.log(response)
             router.push(`${Routes.CHATS}/${response.chatId}`)
-            // toast.success(<CustomToast text="Фото профиля успешно обновлено" />)
         } catch (error: any) {
-            // console.log(error?.data)
             toast.error(<CustomToast text={error?.data?.message || 'Непредвиденная ошибка'} />)
-            // setError(error?.message || 'Непредвиденная ошибка')
         }
     }
     return (

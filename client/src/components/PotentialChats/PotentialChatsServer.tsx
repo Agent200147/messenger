@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { getUserChats, getUserPotentialChats } from "@/utils";
-import PotentialChats from "@/components/PotintialChats/PotentialChats";
+import { getUserChats, getPotentialUsersToChat } from "@/utils";
+import PotentialChats from "@/components/PotentialChats/PotentialChats";
 
 const PotentialChatsServer: FC = async () => {
-    const potentialChats = await getUserPotentialChats()
+    const potentialChats = await getPotentialUsersToChat()
     const userChats = await getUserChats()
     // const userChats2 = await getUserChats()
     return (

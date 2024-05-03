@@ -1,6 +1,5 @@
 import type {Metadata} from "next";
 import PublicProvider from "@/providers/PublicProvider";
-import {getIsAuth} from "../../utils";
 import {redirect} from "next/navigation";
 
 export const metadata: Metadata = {

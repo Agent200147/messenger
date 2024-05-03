@@ -1,19 +1,19 @@
 import { Router } from 'express';
 import {
     createChat,
-    findUserChats,
-    findChat,
-    findUserChatsAndRecipients, readChatMessages, findUserPotentialChats, canvas
+    findUserChatsAndRecipients,
+    readChatMessages,
+    findUserPotentialUsersToChat,
+    saveCanvas
 } from "../Controllers/ChatController.js";
 import { checkAuth } from "../Controllers/UserController.js";
 
 const router = Router()
 
+router.get("/", checkAuth, findUserChatsAndRecipients)
 router.post("/create", checkAuth, createChat)
 router.post("/read", checkAuth, readChatMessages)
-router.get("/potential", checkAuth, findUserPotentialChats)
-router.get("/:userId", checkAuth, findUserChatsAndRecipients)
-router.get("/find/:firstId/:secondId", checkAuth, findChat)
-router.post("/canvas", checkAuth, canvas)
+router.get("/potential", checkAuth, findUserPotentialUsersToChat)
+router.post("/canvas", checkAuth, saveCanvas)
 
 export default router

@@ -50,7 +50,7 @@
 }
 
 .form button:hover {
-    color: whitesmoke;
+    color: var(--white);
     background: var(--main-color);
 }
 

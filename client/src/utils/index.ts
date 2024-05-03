@@ -10,7 +10,7 @@ type FetchFailedType = {
     error: boolean
 }
 
-type AuthResponseType =  {
+type CustomResponseType =  {
     message: string
 }
 
@@ -19,6 +19,7 @@ type ChatMessagesAndRecipientType = {
     messages:MessageType[],
     recipients: UserInChatType[]
 } | null
+
 const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType | undefined> => {
     const authCookie = cookies().get('auth')?.value
     if (!authCookie) return
@@ -30,30 +31,32 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
                 Cookie: `auth=${authCookie};`
             },
         })
-       if (!response.ok)
-           return
+        if (!response.ok && response.status !== 401)
+           return { error: true }
 
         const result = await response.json()
-        return result
+        return result as T
     } catch (error) {
         return { error: true }
     }
 }
+
 export async function getIsAuth() {
-    const response = await myFetch<AuthResponseType>('/users/checkAuth', 'GET')
+    const response = await myFetch<CustomResponseType>('/users/checkAuth', 'GET')
+    console.log(response)
     if (!response) return false
     if ('error' in response)  return response
     if ('message' in response)  return response?.message === 'Ок'
 }
 
 export function getAuthCookie() {
-    const authCookie = cookies().get('auth')?.value as string
+    const authCookie = cookies().get('auth')?.value
     if (!authCookie) return
     return encodeURIComponent(authCookie)
 }
 
 export function getUserFromCookies(): AuthenticatedUserType | undefined {
-    const authCookie = cookies().get('auth')?.value as string
+    const authCookie = cookies().get('auth')?.value
     if (!authCookie) return
     try {
         const user = jwt.verify(authCookie, 'key404203230') as AuthenticatedUserType
@@ -65,13 +68,11 @@ export function getUserFromCookies(): AuthenticatedUserType | undefined {
 }
 
 export async function getUserChats() {
-    const user = getUserFromCookies()
-    if(!user) return
-    return await myFetch<ChatTypeWithFullInfo[]>(`/chats/${user.id}`, 'GET')
+    return await myFetch<ChatTypeWithFullInfo[]>(`/chats`, 'GET')
 }
 
-export async function getUserPotentialChats() {
-    return await myFetch<ChatTypeWithFullInfo[]>('/chats/potential', 'GET')
+export async function getPotentialUsersToChat() {
+    return await myFetch<UserInChatType[]>('/chats/potential', 'GET')
 }
 
 // export async function getChatMessages(chatId) {

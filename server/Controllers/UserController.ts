@@ -70,7 +70,6 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res: Response) => {
     const { email, password } = req.body
-    console.log(email, password)
     try {
         let user = await UserModel.findOne({ where: { email: email } })
         if (!user) return res.status(400).json('Неверный логин или пароль')
@@ -142,6 +141,7 @@ export const checkAuth = async (req, res, next) => {
 
         if (!user) {
             res.status(401).json({ message: 'Не авторизован' })
+            return
         }
         if (user.avatar !== decodedUser.avatar) {
             console.log('miss')
@@ -152,26 +152,27 @@ export const checkAuth = async (req, res, next) => {
         req.user = user
         next()
     } catch (error) {
+        console.log(error)
         res.status(401).json({ message: 'Не авторизован' })
     }
 };
 
-export const checkAuth2 = async (req, res, next) => {
+export const checkAuth2 = async (req, res) => {
     try {
-        // const token = req.cookies?.auth
-        // console.log(req.cookies)
         const token = req.cookies?.auth
-        // console.log(token)
-        // console.log('checkAuth2:', token)
-        // console.log(req.cookies?.auth)
-        // console.log(req.cookies, token, 'f')
-        const decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY || '');
-        // console.log(decodedUser)
-        const user = await UserModel.findByPk(decodedUser?.id);
+
+        let decodedUser
+        try {
+            decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY || '')
+        } catch (e) {
+            res.status(401).json({ message: 'Не авторизован' })
+            return
+        }
+
+        const user = await UserModel.findByPk(decodedUser?.id)
 
         if (!user) {
-            // res.clearCookie('auth')
-            res.status(401).json({ message: 'Не авторизован' });
+            res.status(401).json({ message: 'Не авторизован' })
             return
         }
 
@@ -182,8 +183,8 @@ export const checkAuth2 = async (req, res, next) => {
         }
         res.status(200).json({message: 'Ок'})
     } catch (error) {
-        // res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
-        res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+        console.log(error)
+        res.status(500).json({ message: 'Непредвиденная ошибка на сервере' })
     }
 };
 

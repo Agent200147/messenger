@@ -6,17 +6,19 @@ import type { FormEvent } from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
 import {getUserFromCookies} from "@/utils";
-import ProfilePage from "@/app/(private)/profile/ProfilePage";
+import Profile from "@/app/(private)/profile/Profile";
 import {AuthenticatedUserType} from "@/Models/User/userModel";
+import {Metadata} from "next";
 
-const Page = () => {
-    const user = getUserFromCookies() as AuthenticatedUserType
+export const metadata: Metadata = {
+    title: "Профиль",
+}
 
-    return (
-        <>
-            <ProfilePage user={user} />
-        </>
-    );
-};
+const ProfilePage = () => {
+    const user = getUserFromCookies()
+    if (!user) throw 'ProfilePage: Ошибка'
 
-export default Page;
+    return <Profile user={user} />
+}
+
+export default ProfilePage

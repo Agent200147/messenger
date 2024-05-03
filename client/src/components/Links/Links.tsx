@@ -22,7 +22,7 @@ export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
     return (
         <>
             <nav className={styles.authLinksWrapper}>
-                <Link href={Routes.USERS} className={ cn([styles.authLink, 'hover-link', pathname === Routes.USERS ? styles.active : ''])}>
+                <Link href={Routes.USERS} className={ cn([styles.link, 'hover-link', pathname === Routes.USERS ? styles.active : ''])}>
                     Пользователи
                 </Link>
             </nav>
@@ -44,12 +44,14 @@ export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
 }
 
 export const NonAuthLinks = () => {
+    const pathname = usePathname()
+
     return (
         <nav className={styles.nonAuthLinksWrapper}>
-            <Link href={Routes.REGISTER} className={styles.nonAuthLink}>
+            <Link href={Routes.REGISTER} className={cn([styles.link, 'hover-link', pathname === Routes.REGISTER ? styles.active : ''])}>
                 Регистрация
             </Link>
-            <Link href={Routes.LOGIN} className={styles.nonAuthLink}>
+            <Link href={Routes.LOGIN} className={cn([styles.link, 'hover-link', pathname === Routes.LOGIN ? styles.active : ''])}>
                 Вход
             </Link>
         </nav>

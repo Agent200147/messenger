@@ -2,18 +2,14 @@
 
 import styles from './chats.module.css'
 
-import { type ChangeEvent, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import type { FC } from "react";
 import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
 import ChatItem from "@/components/ChatItem/ChatItem";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUserChats, setChats, setCurrentChat} from "@/store/slices/chatSlice";
-import {selectUser} from "@/store/slices/authSlice";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
 import SearchInput from "@/components/SearchInput/SearchInput";
-import {useGetChatsMutation} from "@/api/chats/chatsApi";
 import {useParams} from "next/navigation";
-import {log} from "node:util";
 import cn from 'classnames';
 
 type ChatsProps = {
@@ -21,24 +17,24 @@ type ChatsProps = {
 }
 
 const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
+    const dispatch = useDispatch()
     const userChatsStore = useSelector(selectUserChats)
 
-    // const user = useSelector(selectUser)
     const params = useParams()
-    const dispatch = useDispatch()
     const { slug: currentChatId } = params
     const [userChats, setUserChats] = useState<ChatTypeWithFullInfo[]>([])
     const [isEmptySearchResult, setIsEmptySearchResult] = useState<boolean>(false)
 
+    // console.log('preloadedChats',preloadedChats)
     const chats = !!userChats?.length || isEmptySearchResult ? userChats : !!preloadedChats?.length && preloadedChats
-    // console.log(chats)
+
     useEffect(() => {
         dispatch(setChats(preloadedChats))
-    }, [dispatch, preloadedChats]);
+    }, [dispatch, preloadedChats])
 
     useEffect(() => {
         setUserChats(userChatsStore)
-    }, [userChatsStore]);
+    }, [userChatsStore])
 
     useEffect(() => {
         if (!currentChatId) dispatch(setCurrentChat(null))
@@ -79,7 +75,7 @@ const Chats: FC<ChatsProps> = ({ preloadedChats }) => {
                 // <ChatsSkeleton chatsLength={chatsLength}/>
             }
         </div>
-    );
-};
+    )
+}
 
 export default Chats;

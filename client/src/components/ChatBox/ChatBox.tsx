@@ -40,6 +40,8 @@ type CurrentChatProps = {
     }
 }
 
+const MESSAGES_LIMIT = 30
+
 const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRecipient }) => {
     const { unReadMessages: unReadMessagesFromServer, messages: messagesFromServer, recipients } = serverSideMessagesAndRecipient
     const dispatch = useDispatch()
@@ -55,6 +57,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     const [additionalMessages, setAdditionalMessages] = useState<MessageType[]>()
     const [currentDate, setCurrentDate] = useState<string>()
     const [isCurrentDateShow, setIsCurrentDateShow] = useState<boolean>(false)
+    const [isLayoutEffectRunning, setIsLayoutEffectRunning] = useState(false)
 
     const [getAdditionalMessagesMutation] = useGetAdditionalMessagesMutation()
 
@@ -62,7 +65,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     const lastMessageRef = useRef<HTMLDivElement>(null)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const messagesContainerRef = useRef<HTMLDivElement>(null)
-    const offset = useRef(20)
+    const offset = useRef(MESSAGES_LIMIT)
 
     const messages = !!messagesStore?.length ? messagesStore : messagesFromServer
     const unReadMessages = unReadMessagesStore !== undefined ? unReadMessagesStore : unReadMessagesFromServer
@@ -75,6 +78,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
         const divElements = messagesContainerRef.current.querySelectorAll(`.${styles.messageDate}`)
         let timeout: ReturnType<typeof setTimeout>
         const handleScroll = () => {
+            if (isLayoutEffectRunning) return
             if(timeout) clearTimeout(timeout)
             if (!scrollContainerRef.current) return
             let counter = 0
@@ -83,6 +87,7 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
                     counter++
                 }
             })
+
             setCurrentDate(divElements[counter - 1]?.innerHTML)
             setIsCurrentDateShow(true)
             timeout = setTimeout(() => setIsCurrentDateShow(false), 1500)
@@ -96,21 +101,21 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
             if (!scrollContainerRef.current) return
             scrollContainerRef.current.removeEventListener('scroll', throttledHandleScroll)
         }
-    }, [messages])
+    }, [messages, isLayoutEffectRunning])
 
 
     useCustomObserver(firstMessageRef,  async () => {
         if (!hasAdditionalMessages) {
             return
         }
-        const response = await getAdditionalMessagesMutation({chatId: Number(currentChatId), limit: 20, offset: offset.current}).unwrap()
+        const response = await getAdditionalMessagesMutation({chatId: Number(currentChatId), limit: MESSAGES_LIMIT, offset: offset.current}).unwrap()
         setAdditionalMessages(response)
 
         if (isEmpty(response)) {
             setHasAdditionalMessages(false)
             return
         }
-        offset.current = offset.current + 20
+        offset.current = offset.current + MESSAGES_LIMIT
     })
 
     useLayoutEffect(() => {
@@ -128,7 +133,9 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
 
     useLayoutEffect(() => {
         // console.log('{ behavior: "instant" }')
+        setIsLayoutEffectRunning(true)
         lastMessageRef.current?.scrollIntoView({ behavior: "instant" })
+        setTimeout(() => setIsLayoutEffectRunning(false))
         // scrollContainerRef.current?.scroll({ behavior: 'smooth', inline: 'end' })
 
         // if (scrollContainerRef.current) {
@@ -150,13 +157,14 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
     }, [additionalMessages, scrollContainerRef.current])
 
     useLayoutEffect(() => {
+        setIsLayoutEffectRunning(true)
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+        setTimeout(() => setIsLayoutEffectRunning(false), 400)
         if (scrollContainerRef.current)
             prevContainerHeightRef.current = scrollContainerRef.current.scrollHeight
         return () => {
             offset.current++
         }
-
     }, [scrollSmoothFlag])
 
 
@@ -186,9 +194,17 @@ const ChatBox: FC<CurrentChatProps> = ({ currentChatId, serverSideMessagesAndRec
                                 {index === 0 ? <div className={styles.messageDateWrapper}> <span></span> <Moment className={styles.messageDate} format="D MMMM">{msg.createdAt}</Moment> <span></span></div> : null}
                                 <div ref={ref}
                                      className={ cn([selfMessage ? styles.selfMessage : styles.otherMessage, unReadMessages > messageNumberReverse ? styles.unReadMessage : ''])}>
-                                    <div className={styles.messageText}>{text}</div>
+                                    <div className={styles.messageText}>
+                                        {
+                                            text.split('\n').map((line, index) => (
+                                                <Fragment key={index}>
+                                                    {line}
+                                                    {index !== text.split('\n').length - 1 && <br />}
+                                                </Fragment>
+                                            ))
+                                        }
+                                    </div>
                                     <div className={styles.messageInfo}>
-
                                         <Moment className={styles.messageTime} format="HH:mm">{createdAt}</Moment>
                                         {/*{selfMessage && <div className={styles.readCheckMarkWrapper}><ReadCheckMarkSvg isRead={true}/></div> }*/}
                                     </div>

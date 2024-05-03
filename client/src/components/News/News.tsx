@@ -47,23 +47,29 @@ const News = () => {
     const [setCanvasImage] = useSetCanvasImageMutation()
     const socket = SocketFactory.create()
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        if(!currentChatId) return
         const handleResize = () => {
             if (!canvasRef.current) {
                 return
             }
             setUpdateCanvasFlag(prev => !prev)
+
             canvasRef.current.width = canvasRef.current.clientWidth
             canvasRef.current.height = canvasRef.current.clientHeight - 1
+            // canvasRef.current.height = canvasRef.current.offsetHeight - 1
         }
 
+        // setTimeout(handleResize, 1000)
         handleResize()
+
+        // handleResize()
         const debounced = debounce(handleResize, 300)
         window.addEventListener('resize', debounced)
         return () => {
             window.removeEventListener('resize', debounced);
         }
-    }, [])
+    }, [currentChatId])
 
 
     useLayoutEffect(() => {
@@ -217,7 +223,6 @@ const News = () => {
             await setCanvasImage({ image: emptyImageData, chatId: currentChat?.chatId }).unwrap()
         } catch (error) {
             toast.error(<CustomToast text={'Ошибка при очистке изображения'} />)
-
             return
         }
         socket.socket.emit(SocketEmitEvent.ClearCanvasToRecipient, {chatId: currentChat?.chatId, recipientId})
@@ -230,8 +235,6 @@ const News = () => {
 
     return (
         <div ref={canvasWrapperRef} className={cn([styles.newsWrapper,!currentChatId && styles.closed])}>
-            <ToastContainer/>
-
             <button onClick={clearHandler} className={styles.clearBtnWrapper}>
                 <ClearSvg/>
             </button>

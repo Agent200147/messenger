@@ -1,0 +1,8 @@
+.sectionWrapper {
+    display: flex;
+    flex-grow: 1;
+}
+
+.mainPageWrapper {
+    flex-grow: 1;
+}

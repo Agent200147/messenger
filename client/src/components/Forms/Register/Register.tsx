@@ -37,7 +37,7 @@ const RegisterForm: FC = () => {
         try {
             await registerUser(formData).unwrap()
             // redirect('/')
-            router.push('/')
+            router.replace('/')
 
         } catch (e) {
             console.log(e)

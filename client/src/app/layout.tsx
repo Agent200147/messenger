@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import type {Metadata} from "next";
+import {Montserrat} from "next/font/google";
 import "./globals.css";
 import 'react-toastify/dist/ReactToastify.css'
 import "./reset.css";
@@ -9,6 +9,8 @@ import {getIsAuth, getUserChats, getUserFromCookies} from "@/utils";
 import {store} from "@/store/store";
 import {setChats} from "@/store/slices/chatSlice";
 import {redirect} from "next/navigation";
+import {ToastContainer} from "react-toastify";
+import styles from "@/app/page.module.css";
 
 const inter = Montserrat({subsets: ["latin"]});
 
@@ -26,8 +28,11 @@ export default async function RootLayout({children}: Readonly<{ children: React.
         <html>
             <body className={inter.className}>
                 <MainProvider>
+                    <ToastContainer/>
                     <Header/>
-                    {children}
+                    <main className={styles.mainWrapper}>
+                        {children}
+                    </main>
                 </MainProvider>
             </body>
         </html>

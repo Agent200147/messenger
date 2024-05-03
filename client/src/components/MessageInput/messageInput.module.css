@@ -4,13 +4,27 @@
 
     padding: 1em 2em;
     padding-top: 1.2em;
+    column-gap: 1.5em;
 
     border-top: 1px solid var(--border-color);
 }
 
-.inputWrapper input {
+.inputWrapper textarea {
     font-size: 2em;
+    /*line-height: 2.4em;*/
     flex-grow: 1;
+
+    overflow: hidden;
+    resize: none;
+    display: inline-table;
+}
+
+.inputWrapper textarea.scroll {
+    overflow: auto;
+    display: block;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--main-color-dark) transparent;
 }
 
 .inputWrapper button {
@@ -19,6 +33,33 @@
 
 .inputWrapper button:disabled {
     cursor: auto;
+}
+
+.textAreaDiv {
+    font-size: 2em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    position: absolute;
+    /*outline: 1px solid white;*/
+    left: -9999px;
+
+    visibility: hidden;
+    /*left: 0px;*/
+    /*bottom: 100px;*/
+    flex-grow: 1;
+}
+
+.textAreaDiv.scroll {
+    font-size: 2em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    visibility: hidden;
+    position: absolute;
+    /*outline: 1px solid white;*/
+    /*left: -9999px;*/
+    /*left: 0px;*/
+    /*bottom: 100px;*/
+    flex-grow: 1;
 }
 
 .sendButton {

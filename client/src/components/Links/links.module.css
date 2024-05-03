@@ -7,8 +7,9 @@
     cursor: pointer;
 }
 
-.authLink {
+.link {
     font-size: 2em;
+    padding: 0.3em 0.75em;
 }
 
 .active {
@@ -23,11 +24,6 @@
     display: flex;
     align-items: center;
     column-gap: 3rem;
-}
-
-.nonAuthLink {
-    font-size: 2em;
-    padding: 0.3em 0.75em;
 }
 
 .userProfileWrapper {

@@ -26,7 +26,7 @@ type ProfilePageProps = {
     // cancelHandler: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 
-const ProfilePage: FC<ProfilePageProps> = ({ user }) => {
+const Profile: FC<ProfilePageProps> = ({ user }) => {
     // const user = useSelector(selectUser)
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter()
@@ -81,7 +81,6 @@ const ProfilePage: FC<ProfilePageProps> = ({ user }) => {
 
     return (
         <div className={styles.profilePageWrapper}>
-            <ToastContainer />
             <div className={styles.user}>
                 <div className={styles.avatarWrapperMain}>
                     <Image className={styles.avatar} fill src={user.avatar ? (imagePreview || `${process.env.SERVER_URL}/${user.avatar}`) : (imagePreview || avatarImg)}
@@ -117,4 +116,4 @@ const ProfilePage: FC<ProfilePageProps> = ({ user }) => {
     )
 };
 
-export default ProfilePage;
+export default Profile;

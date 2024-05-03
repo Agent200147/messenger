@@ -4,13 +4,9 @@
     font-size: 1rem;
     display: flex;
     flex-direction: column;
-    /*flex-basis: 58%;*/
     flex-grow: 1;
     height: calc(100vh - var(--header-height));
-    /* border-right: 1px solid var(--border-color); */
-
-    overflow-x: hidden;
-    /*overflow-y: auto;*/
+    overflow: hidden;
 }
 
 .messages {
@@ -30,17 +26,24 @@
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    /*justify-content: flex-end;*/
-    /*overflow-x: hidden;*/
-    /*overflow-y: scroll;*/
     row-gap: 1.5em;
-    /*flex-grow: 1;*/
-    /*padding: 1.5em 2em;*/
-
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--main-color) transparent;
 }
+
+/*.messages::-webkit-scrollbar {*/
+/*    width: 15px;*/
+/*    height: 15px;*/
+/*}*/
+
+/*.messages::-webkit-scrollbar-thumb {*/
+/*    background: var(--main-color);*/
+/*    background-color: #f2bf93;*/
+/*    border-radius: 5px;*/
+
+/*}*/
+
+/*.messages::-webkit-scrollbar-button {*/
+/*    background-color: #f2bf93;*/
+/*}*/
 
 .chatDate {
     position: absolute;
@@ -50,38 +53,38 @@
 
     padding: 0.7em;
     background: var(--main-color-dark);
-    color: whitesmoke;
+    color: var(--white);
 
     z-index: 1;
 
     border-radius: 0.3em;
     transform: translateY(-4em);
+    opacity: 0;
+    user-select: none;
 
-    -webkit-transition: transform 0.2s ease-in-out;
-    -moz-transition: transform 0.2s ease-in-out;
-    -o-transition: transform 0.2s ease-in-out;
-    transition: transform 0.2s ease-in-out;
-    /*animation: fade-in3 0.3s ease-in-out forwards;*/
+    -webkit-transition: all 0.4s cubic-bezier(0.65, 1.95, 0.03, 0.82);
+    -moz-transition: all 0.4s cubic-bezier(0.65, 1.95, 0.03, 0.82);
+    -o-transition: all 0.4s cubic-bezier(0.65, 1.95, 0.03, 0.82);
+    transition: all 0.4s cubic-bezier(0.65, 1.95, 0.03, 0.82);
 }
 
 .chatDateShow {
+    opacity: 1;
     transform: translateY(0);
 }
 
 .messageDateWrapper {
     align-self: center;
     display: flex;
+    justify-content: center;
     align-items: center;
     column-gap: 1em;
     width: 30%;
 }
 
 .messageDateWrapper span {
-    flex-grow: 1;
     height: 1px;
     background: var(--border-color);
-    /*opacity: 0.4;*/
-    animation: fade-in-span 0.3s ease-in-out forwards;
 }
 
 .messageDateWrapper span:nth-child(1) {
@@ -92,7 +95,6 @@
     animation: fade-in-span-right 0.3s ease-in-out forwards;
 }
 
-
 .messageDate {
     font-size: 1.6em;
 
@@ -100,36 +102,12 @@
     animation: fade-in3 0.3s ease-in-out forwards;
 }
 
-.messages::-webkit-scrollbar {
-    width: 15px;
-    height: 15px;
-}
-
-.messages::-webkit-scrollbar-thumb {
-    background: var(--main-color);
-    background-color: #f2bf93;
-    border-radius: 5px;
-
-}
-
-.messages::-webkit-scrollbar-button {
-    background-color: #f2bf93;
-}
-
-/*.selfMessage {*/
-/*    animation: fade-in2 0.2s linear forwards;*/
-/*}*/
-
-/*.otherMessage {*/
-/*    animation: fade-in 0.2s linear forwards;*/
-/*}*/
-
 .selfMessage, .otherMessage {
     --message-ratio: 1.8;
     position: relative;
 
     font-size: 1.8em;
-    color: whitesmoke;
+    color: var(--white);
 
     max-width: 40%;
 
@@ -137,9 +115,7 @@
     justify-content: flex-end;
     flex-direction: column;
     row-gap: calc(0.5em / var(--message-ratio));
-    /*padding: calc(1.5em / var(--message-ratio)) calc(2em / var(--message-ratio));*/
     padding: calc(1.3em / var(--message-ratio)) calc(1.7em / var(--message-ratio));
-    /*padding-bottom:  calc(4em / var(--message-ratio));*/
     background: var(--bg-gray);
     border-radius: calc(1em / var(--message-ratio));
     animation: fade-in3 0.3s ease-in-out forwards;
@@ -147,7 +123,6 @@
 
 .selfMessage {
     align-self: flex-end;
-    /*flex-direction: row;*/
     column-gap: calc(1.4em / var(--message-ratio));
 }
 
@@ -157,14 +132,11 @@
 
 .messageText {
     position: relative;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
 .messageInfo {
-    /*position: absolute;*/
-    /*padding-top: 20px;*/
-    /*right: calc(1.7em / var(--message-ratio));*/
-    /*bottom: calc(1em / var(--message-ratio));*/
-    /*margin-top: calc(0.8em / var(--message-ratio));*/
     display: flex;
     align-items: center;
     flex-shrink: 0;
@@ -226,8 +198,10 @@
 @keyframes fade-in-span-left {
     0% {
         /*transform: scale(0.95);*/
-        transform: translate(-6.5em, 0.5em);
-        opacity: 0;
+        flex-grow: 0;
+        transform: translateY(0.5em);
+        /*transform: translate(-6.5em, 0.5em);*/
+        /*opacity: 0;*/
     }
 
     /*50% {*/
@@ -235,8 +209,10 @@
     /*}*/
 
     100% {
+        flex-grow: 1;
         /*transform: scale(1);*/
-        transform: translateX(0);
+        /*transform: translateX(0);*/
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -244,8 +220,10 @@
 @keyframes fade-in-span-right {
     0% {
         /*transform: scale(0.95);*/
-        transform: translate(6.5em, 0.5em);
-        opacity: 0;
+        flex-grow: 0;
+        transform: translateY(0.5em);
+        /*transform: translate(6.5em, 0.5em);*/
+        /*opacity: 0;*/
     }
 
     /*50% {*/
@@ -253,8 +231,10 @@
     /*}*/
 
     100% {
+        flex-grow: 1;
         /*transform: scale(1);*/
-        transform: translateX(0);
+        /*transform: translateX(0);*/
+        transform: translateY(0);
         opacity: 1;
     }
 }

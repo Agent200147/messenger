@@ -15,7 +15,7 @@ const UseCustomObserver = (elementRef: RefObject<HTMLDivElement>, callback: () =
                     // callback()
                 }
             });
-        }, { threshold: 1})
+        }, { threshold: 0.1})
 
         if (elementRef.current) {
             observer.current.observe(elementRef.current)

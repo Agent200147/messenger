@@ -35,7 +35,9 @@ const LoginForm: FC = () => {
     const onSubmit = async (data: LoginFormData) => {
         try {
             await loginUser(data).unwrap()
-            router.push('/')
+            router.replace('/')
+            router.refresh()
+
             // redirect('/')
 
         } catch (e) {
@@ -45,7 +47,7 @@ const LoginForm: FC = () => {
 
     useEffect(() => {
         serverError?.data && setLoginError(serverError.data)
-    }, [serverError]);
+    }, [serverError])
 
     return (
         <div className={styles.formWrapper}>

@@ -9,10 +9,11 @@ const Header = () => {
     const user = getUserFromCookies()
 
     return (
-        <header className={styles.header}>
+        <header className={ cn([styles.header, !user ? styles.headerNonAuth : '']) }>
             <div className={styles.logo}>
                 Aesthetic Messenger
             </div>
+
             <Nav user={user}/>
         </header>
     );
