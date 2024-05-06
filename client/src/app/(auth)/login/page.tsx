@@ -1,12 +1,11 @@
-import styles  from '@/app/(auth)/auth.module.css'
+import type { FC } from "react";
+import type { Metadata } from "next";
+import Login from "@/app/(auth)/login/Login";
 
-import LoginForm from "@/components/Forms/Login/Login";
-const Login = () => {
-    return (
-        <div className={styles.wrapper}>
-            <LoginForm/>
-        </div>
-    );
-};
+export const metadata: Metadata = {
+    title: "Вход",
+}
 
-export default Login;
+const LoginPage: FC = () => <Login/>
+
+export default LoginPage

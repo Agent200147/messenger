@@ -77,6 +77,7 @@ export const loginUser = async (req, res: Response) => {
         if(!isValidPassword) return res.status(400).json('Неверный логин или пароль')
 
         const token = createToken(user.dataValues)
+        // const token = createToken({id: user.id})
 
         res.cookie('auth', token, options)
         res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email, avatar: user.avatar})
@@ -133,7 +134,15 @@ export const currentUser = async (req, res, next) => {
 export const checkAuth = async (req, res, next) => {
     try {
         const token = req.cookies?.auth
-        const decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        let decodedUser
+        console.log('checkAuth middleware')
+
+        try {
+            decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY || '')
+        } catch (e) {
+            res.status(401).json({ message: 'Не авторизован' })
+            return
+        }
 
         const user = await UserModel.findByPk(decodedUser.id, {
             attributes: {exclude: ['password']}
@@ -160,6 +169,7 @@ export const checkAuth = async (req, res, next) => {
 export const checkAuth2 = async (req, res) => {
     try {
         const token = req.cookies?.auth
+        console.log('checkAuth2')
 
         let decodedUser
         try {

@@ -1,30 +1,24 @@
 'use client';
 
-import styles from './news.module.css'
+import styles from './canvas.module.css'
 
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from 'next/navigation';
 
-import {
-    selectCurrentChat,
-    selectRecipientCanvas,
-    drawToRecipient,
-    selectIsDrawingRecipient,
-    endDrawToRecipient, setRecipientCanvas,
-} from "@/store/slices/chatSlice";
-import {useSetCanvasImageMutation} from "@/api/chats/chatsApi";
+import { selectCurrentChat } from "@/store/slices/chatSlice";
+import { useSetCanvasImageMutation } from "@/api/chats/chatsApi";
 import {toast, ToastContainer} from "react-toastify";
 import CustomToast from "@/components/CustomToast/CustomToast";
 import SocketFactory from "@/socket/socket";
 import {SocketEmitEvent, SocketOnEvent} from "@/store/middleware/socket.middleware";
 import ClearSvg from '../SvgComponents/Clear.svg';
-import { useParams } from 'next/navigation';
 import cn from 'classnames';
 import Canvas, { ICanvas } from '@/canvas/canvas';
 import {throttle} from "@/utils/throttle";
 import {debounce} from "@/utils/debounce";
 
-const News = () => {
+const CanvasComponent = () => {
     const params = useParams()
 
     const { slug: currentChatId } = params
@@ -32,9 +26,6 @@ const News = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const commonCanvasRef = useRef<ICanvas>()
 
-    const dispatch = useDispatch()
-    const recipientCanvas = useSelector(selectRecipientCanvas)
-    const isDrawingRecipient = useSelector(selectIsDrawingRecipient)
     const currentChat = useSelector(selectCurrentChat)
 
     const [updateCanvasFlag, setUpdateCanvasFlag] = useState(false)
@@ -45,7 +36,7 @@ const News = () => {
     const recipientCanvasRef = useRef<ICanvas>()
 
     const [setCanvasImage] = useSetCanvasImageMutation()
-    const socket = SocketFactory.create()
+    const { socket } = SocketFactory.create()
 
     useLayoutEffect(() => {
         if(!currentChatId) return
@@ -57,13 +48,10 @@ const News = () => {
 
             canvasRef.current.width = canvasRef.current.clientWidth
             canvasRef.current.height = canvasRef.current.clientHeight - 1
-            // canvasRef.current.height = canvasRef.current.offsetHeight - 1
         }
 
-        // setTimeout(handleResize, 1000)
         handleResize()
 
-        // handleResize()
         const debounced = debounce(handleResize, 300)
         window.addEventListener('resize', debounced)
         return () => {
@@ -73,7 +61,6 @@ const News = () => {
 
 
     useLayoutEffect(() => {
-        setRecipientCanvas(null)
         if (!canvasRef.current) {
             return
         }
@@ -134,7 +121,7 @@ const News = () => {
             }
 
         const throttledDispatch = throttle((x, y) => {
-            dispatch(drawToRecipient({ chatId: currentChat.chatId, recipientId, x, y }))
+            socket.emit(SocketEmitEvent.DrawToRecipient, { chatId: currentChat.chatId, recipientId, x, y })
         }, 50)
 
         const drawHandler = (e: MouseEvent) => {
@@ -153,7 +140,7 @@ const News = () => {
                 const myCanvasImageData = myCanvasRef.current.toDataURL()
                 try {
                     await setCanvasImage({ image: myCanvasImageData, chatId: currentChat?.chatId }).unwrap()
-                    dispatch(endDrawToRecipient({chatId: currentChat.chatId, recipientId}))
+                    socket.emit(SocketEmitEvent.EndDrawToRecipient, {chatId: currentChat.chatId, recipientId})
                 } catch (error) {
                     toast.error(<CustomToast text={'Ошибка при загрузке изображения'} />)
                 }
@@ -177,22 +164,28 @@ const News = () => {
     }, [currentChat?.chatId, canvasRef.current, updateCanvasFlag])
 
     useEffect(() => {
-        if(!isDrawingRecipient) return
-
-        commonCanvasRef.current?.beginPath()
-        recipientCanvasRef.current?.beginPath()
-    }, [isDrawingRecipient])
-
-    useEffect(() => {
-        if(!currentChat || !recipientCanvas) return
-
-        commonCanvasRef.current?.draw(recipientCanvas.x, recipientCanvas.y, 'red')
-        recipientCanvasRef.current?.draw(recipientCanvas.x, recipientCanvas.y)
-    }, [currentChat?.chatId, recipientCanvas])
-
-    useEffect(() => {
         if(!currentChat) return
-        socket.socket.on(SocketOnEvent.GetClearCanvasToRecipient, (chatId) => {
+
+        let isDrawing = false
+
+        socket.on(SocketOnEvent.GetRecipientDraw, ({ chatId, x, y }) => {
+            if(chatId !== currentChat.chatId) return
+
+            if(!isDrawing) {
+                commonCanvasRef.current?.beginPath()
+                recipientCanvasRef.current?.beginPath()
+            }
+            isDrawing = true
+            commonCanvasRef.current?.draw(x, y, 'red')
+            recipientCanvasRef.current?.draw(x, y)
+        })
+
+        socket.on(SocketOnEvent.GetEndRecipientDraw, (chatId) => {
+            if(chatId !== currentChat.chatId) return
+            isDrawing = false
+        })
+
+        socket.on(SocketOnEvent.GetClearRecipientCanvas, (chatId) => {
             if(chatId !== currentChat.chatId) return
             recipientCanvasRef.current?.clear()
             commonCanvasRef.current?.clear()
@@ -202,11 +195,11 @@ const News = () => {
         })
 
         return () => {
-            socket.socket.off(SocketOnEvent.GetClearCanvasToRecipient)
+            socket.off(SocketOnEvent.GetRecipientDraw)
+            socket.off(SocketOnEvent.GetEndRecipientDraw)
+            socket.off(SocketOnEvent.GetClearRecipientCanvas)
         }
-
     }, [currentChat?.chatId])
-
 
     const clearHandler = async () => {
         if(!canvasRef.current || ! currentChat) return
@@ -225,7 +218,7 @@ const News = () => {
             toast.error(<CustomToast text={'Ошибка при очистке изображения'} />)
             return
         }
-        socket.socket.emit(SocketEmitEvent.ClearCanvasToRecipient, {chatId: currentChat?.chatId, recipientId})
+        socket.emit(SocketEmitEvent.ClearCanvasToRecipient, {chatId: currentChat?.chatId, recipientId})
 
         commonCanvasRef.current?.clear()
         myCanvasRef.current?.clear()
@@ -246,4 +239,4 @@ const News = () => {
     )
 }
 
-export default News;
+export default CanvasComponent

@@ -1,17 +1,20 @@
 'use client';
 
-import styles from '../Forms.module.css'
+import styles  from '@/app/(auth)/auth.module.css'
 
-import { type FC } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {redirect, useRouter} from "next/navigation";
-import { registerFormSchema, type RegisterFormData } from "@/components/Forms/Register/RegisterSchema";
-import { FormRegisterInput } from "@/components/FormInput/FormInput";
-import { useRegisterMutation } from "@/api/auth/authApi";
+import type { FC } from "react";
+
+import type { RegisterFormData } from "@/app/(auth)/register/RegisterSchema";
 import type { ServerErrorResponse, ZodErrorResponse } from "@/Models/ErrorResponse/errorResponseTypes";
 
-const RegisterForm: FC = () => {
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { registerFormSchema } from "@/app/(auth)/register/RegisterSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRegisterMutation } from "@/api/auth/authApi";
+import { FormRegisterInput } from "@/components/FormInput/FormInput";
+
+const Register: FC = () => {
     const router = useRouter()
     const form = useForm<RegisterFormData>({
         defaultValues:{
@@ -74,4 +77,4 @@ const RegisterForm: FC = () => {
     )
 }
 
-export default RegisterForm;
+export default Register;

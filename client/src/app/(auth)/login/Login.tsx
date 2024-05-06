@@ -1,18 +1,21 @@
 'use client';
 
-import styles from "@/components/Forms/Forms.module.css";
+import styles  from '@/app/(auth)/auth.module.css'
 
-import { useEffect, useState} from "react";
 import type { FC } from "react";
-import { redirect, useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { loginFormSchema, type LoginFormData } from "@/components/Forms/Login/LoginSchema";
-import { zodResolver}  from "@hookform/resolvers/zod";
-import { useLoginMutation } from "@/api/auth/authApi";
-import { FormLoginInput } from "@/components/FormInput/FormInput";
-import { ServerErrorResponse } from "@/Models/ErrorResponse/errorResponseTypes";
 
-const LoginForm: FC = () => {
+import type { LoginFormData } from "@/app/(auth)/login/LoginSchema";
+import type { ServerErrorResponse } from "@/Models/ErrorResponse/errorResponseTypes";
+
+import { loginFormSchema } from "@/app/(auth)/login/LoginSchema";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoginMutation}  from "@/api/auth/authApi";
+import { FormLoginInput}  from "@/components/FormInput/FormInput";
+
+const Login: FC = () => {
     const [loginError, setLoginError] = useState('')
 
     const router = useRouter()
@@ -68,7 +71,7 @@ const LoginForm: FC = () => {
             </form>
         </div>
 
-    );
-};
+    )
+}
 
-export default LoginForm;
+export default Login

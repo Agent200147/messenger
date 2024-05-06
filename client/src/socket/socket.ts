@@ -2,7 +2,7 @@
 import { io, Socket } from "socket.io-client";
 
 export interface SocketInterface {
-    socket: Socket;
+    socket: Socket
 }
 
 class SocketConnection implements SocketInterface {

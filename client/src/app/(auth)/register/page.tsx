@@ -1,12 +1,11 @@
-import styles  from '@/app/(auth)/auth.module.css'
-import RegisterForm from "@/components/Forms/Register/Register";
+import type { FC } from "react";
+import type { Metadata } from "next";
+import Register from "@/app/(auth)/register/Register";
 
-const Register = () => {
-    return (
-        <div className={styles.wrapper}>
-            <RegisterForm/>
-        </div>
-    );
-};
+export const metadata: Metadata = {
+    title: "Регистрация",
+}
 
-export default Register;
+const RegisterPage: FC = () => <Register/>
+
+export default RegisterPage

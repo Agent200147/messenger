@@ -69,7 +69,6 @@ const slice = createSlice({
                 state.currentChat.recipientInfo.user.lastOnline = (new Date()).toString()
                 // console.log('removeOnlineUser')
             }
-
         },
 
         setLastMessage: (state, action) => {
@@ -110,23 +109,6 @@ const slice = createSlice({
             if (!chat) return
             chat.unReadMessages++
         },
-
-
-        setRecipientCanvas: (state, action) => {
-            state.recipientCanvas = action.payload
-        },
-
-        drawToRecipient: (state, action) => {
-            return
-        },
-
-        endDrawToRecipient: (state, action) => {
-            return
-        },
-
-        setIsRecipientDrawing: (state, action) => {
-            state.isDrawingRecipient = action.payload
-        },
     },
     extraReducers: (builder) => {
         builder
@@ -149,12 +131,10 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers, addNewOnlineUser, removeOnlineUser, setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead, setRecipientCanvas, drawToRecipient, endDrawToRecipient, setIsRecipientDrawing } = slice.actions;
+export const { setChats, setCurrentChat, setNewChat, addNewChat, setOnlineUsers, addNewOnlineUser, removeOnlineUser, setLastMessage, setNotifications, addUnreadMessageToRecipient, markRecipientMessagesAsRead, addUnreadMessageToCurrentChat, markChatMessagesAsRead } = slice.actions;
 
 export const selectUserChats = (state: RootState) => state.chats.chats
 export const selectCurrentChat = (state: RootState) => state.chats.currentChat
 export const selectNewChat = (state: RootState) => state.chats.newChat
 export const selectOnlineUsers = (state: RootState) => state.chats.onlineUsers
-export const selectRecipientCanvas = (state: RootState) => state.chats.recipientCanvas
-export const selectIsDrawingRecipient = (state: RootState) => state.chats.isDrawingRecipient
 export const selectNotifications = (state: RootState) => state.chats.notifications

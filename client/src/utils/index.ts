@@ -1,4 +1,3 @@
-// 'use server';
 import {cookies} from "next/headers";
 import type {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
 import {AuthenticatedUserType, UserInChatType} from "@/Models/User/userModel";
@@ -7,7 +6,9 @@ import {MessageType} from "@/Models/Message/messageModel";
 
 
 type FetchFailedType = {
-    error: boolean
+    error: true,
+} | {
+    unauthorized: true
 }
 
 type CustomResponseType =  {
@@ -22,7 +23,7 @@ type ChatMessagesAndRecipientType = {
 
 const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType | undefined> => {
     const authCookie = cookies().get('auth')?.value
-    if (!authCookie) return
+    if (!authCookie) return { unauthorized: true }
     try {
         const response = await fetch(`${process.env.API_URL + url}`, {
             method,
@@ -31,8 +32,14 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
                 Cookie: `auth=${authCookie};`
             },
         })
-        if (!response.ok && response.status !== 401)
-           return { error: true }
+        console.log('myFetch:', url, response.status)
+        if (!response.ok)
+        {
+            if(response.status === 401) {
+                return { unauthorized: true }
+            }
+            return { error: true }
+        }
 
         const result = await response.json()
         return result as T
@@ -43,7 +50,7 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
 
 export async function getIsAuth() {
     const response = await myFetch<CustomResponseType>('/users/checkAuth', 'GET')
-    console.log(response)
+    console.log('getIsAuth:', response)
     if (!response) return false
     if ('error' in response)  return response
     if ('message' in response)  return response?.message === 'Ок'

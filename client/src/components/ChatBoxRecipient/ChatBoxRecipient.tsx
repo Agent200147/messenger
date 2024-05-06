@@ -1,15 +1,17 @@
-import {FC, useEffect, useState} from 'react';
 import styles from "./chatBoxRecipient.module.css";
+
+import type { FC } from 'react';
+
+import type { UserInChatType } from "@/Models/User/userModel";
+
+import { useEffect, useState } from 'react';
 import Image from "next/image";
 import avatarImg from "@/public/img/avatar.svg";
 import Moment from "react-moment";
-import {useDispatch, useSelector} from "react-redux";
-import {
-    selectCurrentChat,
-    selectOnlineUsers,
-} from "@/store/slices/chatSlice";
-import {UserInChatType} from "@/Models/User/userModel";
-import {SocketOnEvent} from "@/store/middleware/socket.middleware";
+import { useSelector } from "react-redux";
+
+import { selectCurrentChat, selectOnlineUsers } from "@/store/slices/chatSlice";
+import { SocketOnEvent } from "@/store/middleware/socket.middleware";
 import SocketFactory from "@/socket/socket";
 
 type ChatBoxRecipientProps = {
@@ -20,7 +22,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     const onlineUsers = useSelector(selectOnlineUsers)
     const currentChat = useSelector(selectCurrentChat)
     const isOnlineRecipient = onlineUsers.find(userId => userId === recipient.id)
-    const socket = SocketFactory.create()
+    const { socket } = SocketFactory.create()
     const calendarStrings = {
         lastDay : '[вчера, в] LT',
         sameDay : '[сегодня, в] LT',
@@ -31,7 +33,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     useEffect(() => {
         if(!currentChat) return
         let timeout: ReturnType<typeof setTimeout>
-        socket.socket.on(SocketOnEvent.GetTypingTrigger, (chatId) => {
+        socket.on(SocketOnEvent.GetTypingTrigger, (chatId) => {
             if (chatId !== currentChat.chatId) return
             setIsTyping(true)
             if (timeout) {
@@ -42,7 +44,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
         })
 
         return () => {
-            socket.socket.off(SocketOnEvent.GetTypingTrigger)
+            socket.off(SocketOnEvent.GetTypingTrigger)
             if (timeout) {
                 clearTimeout(timeout)
             }

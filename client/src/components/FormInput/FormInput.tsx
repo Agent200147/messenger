@@ -1,8 +1,8 @@
 import styles from './formInput.module.css'
 import type { FC, InputHTMLAttributes } from "react";
 import type { FieldValues, UseFormRegister } from 'react-hook-form';
-import type { RegisterFormData } from "@/components/Forms/Register/RegisterSchema";
-import type { LoginFormData } from "@/components/Forms/Login/LoginSchema";
+import type { RegisterFormData } from "@/app/(auth)/register/RegisterSchema";
+import type { LoginFormData } from "@/app/(auth)/login/LoginSchema";
 
 import cn from "classnames";
 

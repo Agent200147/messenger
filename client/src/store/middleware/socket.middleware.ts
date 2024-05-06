@@ -17,13 +17,9 @@ import {
     markChatMessagesAsRead,
     markRecipientMessagesAsRead,
     removeOnlineUser,
-    drawToRecipient,
     setCurrentChat,
     setLastMessage,
     setOnlineUsers,
-    setRecipientCanvas,
-    endDrawToRecipient,
-    setIsRecipientDrawing
 } from "@/store/slices/chatSlice";
 import { messagesApi } from "@/api/messages/messgesApi";
 import { addMessage } from "@/store/slices/messageSlice";
@@ -57,7 +53,7 @@ export enum SocketOnEvent {
     GetRecipientDraw = 'get-recipient-draw',
     GetEndRecipientDraw = 'get-end-recipient-draw',
     GetTypingTrigger = 'get-typing-trigger',
-    GetClearCanvasToRecipient = 'get-clear-canvas',
+    GetClearRecipientCanvas = 'get-clear-canvas',
 }
 
 const socketMiddleware: Middleware = (store) => {
@@ -134,16 +130,16 @@ const socketMiddleware: Middleware = (store) => {
                     store.dispatch(removeOnlineUser(userId))
                 })
 
-                socket.socket.on(SocketOnEvent.GetRecipientDraw, (data) => {
-                    if(data.chatId !== getState().chats.currentChat?.chatId) return
-                    store.dispatch(setRecipientCanvas(data))
-                    store.dispatch(setIsRecipientDrawing(true))
-                })
+                // socket.socket.on(SocketOnEvent.GetRecipientDraw, (data) => {
+                //     if(data.chatId !== getState().chats.currentChat?.chatId) return
+                //     store.dispatch(setRecipientCanvas(data))
+                //     store.dispatch(setIsRecipientDrawing(true))
+                // })
 
-                socket.socket.on(SocketOnEvent.GetEndRecipientDraw, (chatId) => {
-                    if(chatId !== getState().chats.currentChat?.chatId) return
-                    store.dispatch(setIsRecipientDrawing(false))
-                })
+                // socket.socket.on(SocketOnEvent.GetEndRecipientDraw, (chatId) => {
+                //     if(chatId !== getState().chats.currentChat?.chatId) return
+                //     store.dispatch(setIsRecipientDrawing(false))
+                // })
 
                 // socket.socket.on(SocketOnEvent.GetTypingTrigger, () => {
                 //     store.dispatch(setRecipientTypingTrigger(!getState().chats.typingTrigger))
@@ -189,15 +185,15 @@ const socketMiddleware: Middleware = (store) => {
             socket.socket.emit(SocketEmitEvent.CreateNewChat, { newChat: updatedChat, recipientId })
         }
 
-        if(drawToRecipient.match(action)) {
-            // console.log('sendMyCanvas:', action.payload)
-            socket.socket.emit(SocketEmitEvent.DrawToRecipient, action.payload)
-        }
-
-        if(endDrawToRecipient.match(action)) {
-            // console.log('sendMyCanvas:', action.payload)
-            socket.socket.emit(SocketEmitEvent.EndDrawToRecipient, action.payload)
-        }
+        // if(drawToRecipient.match(action)) {
+        //     // console.log('sendMyCanvas:', action.payload)
+        //     socket.socket.emit(SocketEmitEvent.DrawToRecipient, action.payload)
+        // }
+        //
+        // if(endDrawToRecipient.match(action)) {
+        //     // console.log('sendMyCanvas:', action.payload)
+        //     socket.socket.emit(SocketEmitEvent.EndDrawToRecipient, action.payload)
+        // }
 
         // if(sendTypingTrigger.match(action)) {
         //     // console.log('sendTypingTrigger:', action.payload)
@@ -207,6 +203,7 @@ const socketMiddleware: Middleware = (store) => {
         // if(clearRecipientCanvas.match(action)) {
         //     socket.socket.emit(SocketEmitEvent.ClearCanvasToRecipient, action.payload)
         // }
+
 
         if(disconnectSocket.match(action) && socket) {
             setLastOnline()

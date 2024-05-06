@@ -16,9 +16,15 @@ export const metadata: Metadata = {
 export default async function Home({ params } : Props) {
     const chatId = params.slug
     if (!(/^\d+$/.test(chatId))) redirect('/')
+
     const serverSideMessagesAndRecipient = await getChatMessagesAndRecipient(chatId)
     if (!serverSideMessagesAndRecipient || 'error' in serverSideMessagesAndRecipient)
         redirect('/')
+
+    if('unauthorized' in serverSideMessagesAndRecipient) {
+        redirect('/login')
+
+    }
 
     return (
         <>

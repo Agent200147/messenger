@@ -29,7 +29,7 @@ const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
     const [sendTextMessage] = useSendMessageMutation()
 
     const recipientId = currentChat?.recipientInfo.user.id
-    const socket = SocketFactory.create()
+    const { socket } = SocketFactory.create()
     const onChangeMessageInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
         let newStr = e.target.value.replace(/(\rn|\n|\r)/gm, '')
         if (!newStr) {
@@ -50,7 +50,7 @@ const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
 
     useEffect(() => {
         if(!textAreaDivRef.current || !textAreaRef.current) return
-        if(messageText && recipientId) socket.socket.emit(SocketEmitEvent.TypingTrigger, {chatId: currentChat.chatId, recipientId})
+        if(messageText && recipientId) socket.emit(SocketEmitEvent.TypingTrigger, {chatId: currentChat.chatId, recipientId})
 
         const textArea = textAreaRef.current
         textAreaDivRef.current.style.width = textArea.clientWidth + 'px'
