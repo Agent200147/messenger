@@ -1,8 +1,7 @@
-import {cookies} from "next/headers";
-import type {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
-import {AuthenticatedUserType, UserInChatType} from "@/Models/User/userModel";
-import jwt from 'jsonwebtoken'
-import {MessageType} from "@/Models/Message/messageModel";
+import { cookies } from "next/headers";
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
+import type { AuthenticatedUserType, UserInChatType } from "@/Models/User/userModel";
+import type { MessageType } from "@/Models/Message/messageModel";
 
 
 type FetchFailedType = {
@@ -12,7 +11,7 @@ type FetchFailedType = {
 }
 
 type CustomResponseType =  {
-    message: string
+    user: AuthenticatedUserType
 }
 
 type ChatMessagesAndRecipientType = {
@@ -21,7 +20,7 @@ type ChatMessagesAndRecipientType = {
     recipients: UserInChatType[]
 } | null
 
-const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType | undefined> => {
+const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType> => {
     const authCookie = cookies().get('auth')?.value
     if (!authCookie) return { unauthorized: true }
     try {
@@ -51,9 +50,10 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
 export async function getIsAuth() {
     const response = await myFetch<CustomResponseType>('/users/checkAuth', 'GET')
     console.log('getIsAuth:', response)
-    if (!response) return false
-    if ('error' in response)  return response
-    if ('message' in response)  return response?.message === 'Ок'
+    if ('unauthorized' in response) return false
+    if ('error' in response) return response
+
+    if ('user' in response) return response
 }
 
 export function getAuthCookie() {
@@ -62,16 +62,9 @@ export function getAuthCookie() {
     return encodeURIComponent(authCookie)
 }
 
-export function getUserFromCookies(): AuthenticatedUserType | undefined {
+export function getUserFromCookies(): boolean {
     const authCookie = cookies().get('auth')?.value
-    if (!authCookie) return
-    try {
-        const user = jwt.verify(authCookie, 'key404203230') as AuthenticatedUserType
-        return user
-
-    } catch (e) {
-        return
-    }
+    return !!authCookie
 }
 
 export async function getUserChats() {
@@ -81,23 +74,6 @@ export async function getUserChats() {
 export async function getPotentialUsersToChat() {
     return await myFetch<UserInChatType[]>('/chats/potential', 'GET')
 }
-
-// export async function getChatMessages(chatId) {
-//     const authCookie = getAuthCookie()
-//
-//     // console.log('rrrrrrr: ', user)
-//     const response = await fetch(`http://localhost:8000/api/messages/${chatId}`, {
-//         method: 'GET',
-//         headers: {
-//             Accept: 'application/json',
-//             Cookie: `auth=${authCookie};`
-//         },
-//         // credentials: 'include',
-//     })
-//     // console.log(result)
-//     return await response.json()
-// }
-
 
 export async function getChatMessagesAndRecipient(chatId: string) {
     return await myFetch<ChatMessagesAndRecipientType>(`/messages/${chatId}`, 'GET')

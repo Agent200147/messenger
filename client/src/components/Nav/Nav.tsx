@@ -1,22 +1,17 @@
 'use client';
 
-import styles from './nav.module.css'
 import { AuthLinks, NonAuthLinks } from "@/components/Links/Links";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUser, setUser} from "@/store/slices/authSlice";
-import { useCookies } from 'next-client-cookies';
-import {cookies} from "next/headers";
 import {useEffect} from "react";
-import {isEmpty} from "@/utils/ClientServices";
 import {AuthenticatedUserType} from "@/Models/User/userModel";
-// import { getCookies, setCookie, deleteCookie, getCookie } from 'cookies-next'
-const Nav = ({ user }: { user: AuthenticatedUserType | undefined  }) => {
-    const dispatch = useDispatch()
+
+const Nav = ({ user }: { user: AuthenticatedUserType | false  }) => {
     const userFromStore = useSelector(selectUser)
 
-    useEffect(() => {
-        dispatch(setUser(user))
-    }, [dispatch])
+    // useEffect(() => {
+    //     dispatch(setUser(user))
+    // }, [dispatch])
 
     return (
         <>
@@ -26,7 +21,7 @@ const Nav = ({ user }: { user: AuthenticatedUserType | undefined  }) => {
                     : <NonAuthLinks/>
             }
         </>
-    );
-};
+    )
+}
 
-export default Nav;
+export default Nav

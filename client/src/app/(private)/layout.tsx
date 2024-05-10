@@ -6,6 +6,7 @@ import {getIsAuth} from "@/utils";
 import {redirect} from "next/navigation";
 import {NextResponse} from "next/server";
 import {Routes} from "@/Routes/routes";
+import UserInitProvider from "@/providers/UserInit.provider";
 
 export const metadata: Metadata = {
     title: "Auth",
@@ -20,15 +21,16 @@ export default async function PrivateLayout({children}: Readonly<{ children: Rea
     }
 
     if(typeof isAuth === 'object' && 'error' in isAuth) {
-        redirect(Routes.SERVER_ERROR)
-        return
+       throw Error('PrivateLayout: Ошибка')
     }
 
     return (
-        <section className={styles.sectionWrapper}>
-            <AsideChats/>
-            {children}
-            <CanvasComponent/>
-        </section>
+        <UserInitProvider user={isAuth.user}>
+            <section className={styles.sectionWrapper}>
+                <AsideChats/>
+                {children}
+                <CanvasComponent/>
+            </section>
+        </UserInitProvider>
     )
 }

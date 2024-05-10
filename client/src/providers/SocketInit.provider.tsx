@@ -26,7 +26,7 @@ const SocketInitProvider = ({ children }: Readonly<{ children: ReactNode }>) => 
 
     useSetLastOnlineOnUnload()
 
-    return <> {children}</>
+    return <>{children}</>
 }
 
-export default SocketInitProvider;
+export default SocketInitProvider

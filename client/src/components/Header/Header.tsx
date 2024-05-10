@@ -1,22 +1,26 @@
-import React, {FC} from 'react';
 import styles from './header.module.css'
-import {Playfair} from "next/font/google";
+
+import type {FC} from 'react';
+
 import cn from 'classnames'
 import Nav from "@/components/Nav/Nav";
-import {getUserFromCookies} from "@/utils";
-// const poor_Story = Playfair({subsets: ["latin"]});
-const Header = () => {
-    const user = getUserFromCookies()
+import { getIsAuth } from "@/utils";
+
+const Header = async () => {
+    let isAuthUser = await getIsAuth()
+
+    if(!isAuthUser || 'error' in isAuthUser) {
+         isAuthUser = false
+    }
 
     return (
-        <header className={ cn([styles.header, !user ? styles.headerNonAuth : '']) }>
+        <header className={ cn([styles.header, !isAuthUser ? styles.headerNonAuth : '']) }>
             <div className={styles.logo}>
                 Aesthetic Messenger
             </div>
-
-            <Nav user={user}/>
+            <Nav user={isAuthUser && isAuthUser?.user}/>
         </header>
-    );
-};
+    )
+}
 
-export default Header;
+export default Header

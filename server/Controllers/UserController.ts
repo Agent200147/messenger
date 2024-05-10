@@ -8,6 +8,7 @@ import {serialize} from "cookie";
 import type { CookieOptions, Response } from "express";
 import fs from "fs";
 import {nanoid} from "nanoid";
+import {ZodError} from "zod";
 
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000
 // const createToken = (id) => {
@@ -36,12 +37,17 @@ export const registerUser = async (req, res) => {
 
         try {
             await userZodSchema.parseAsync({ name, secondName, email, password })
-
         }
         catch (e) {
-            return res.status(400).json(e)
+            if(e instanceof ZodError) {
+                return res.status(400).json({ name: 'ZodError', errors: e.issues.map(err => err.message) })
+            }
+            return res.status(500).json('Непредвиденная ошибка на сервере')
         }
 
+        res.status(500).json('Непредвиденная ошибка на сервере')
+
+        return
         // console.log('username ', username, ' email ', email, ' password ', password)
         // if(!name || !email || !password) return res.status(400).json('Все поля обязательны')
 
@@ -56,6 +62,7 @@ export const registerUser = async (req, res) => {
         user.password = await bcrypt.hash(user.password, salt)
 
         // console.log(user._id)
+
         await user.save()
 
         const token = createToken(user.dataValues)
@@ -76,8 +83,8 @@ export const loginUser = async (req, res: Response) => {
         const isValidPassword = await bcrypt.compare(password, user.password)
         if(!isValidPassword) return res.status(400).json('Неверный логин или пароль')
 
-        const token = createToken(user.dataValues)
-        // const token = createToken({id: user.id})
+        // const token = createToken(user.dataValues)
+        const token = createToken({id: user.id})
 
         res.cookie('auth', token, options)
         res.status(200).json({id: user.id, name: user.name, secondName: user.secondName, email, avatar: user.avatar})
@@ -152,11 +159,11 @@ export const checkAuth = async (req, res, next) => {
             res.status(401).json({ message: 'Не авторизован' })
             return
         }
-        if (user.avatar !== decodedUser.avatar) {
-            console.log('miss')
-            const token = createToken(user.dataValues)
-            res.cookie('auth', token, options)
-        }
+        // if (user.avatar !== decodedUser.avatar) {
+        //     console.log('miss')
+        //     const token = createToken(user.dataValues)
+        //     res.cookie('auth', token, options)
+        // }
 
         req.user = user
         next()
@@ -169,7 +176,7 @@ export const checkAuth = async (req, res, next) => {
 export const checkAuth2 = async (req, res) => {
     try {
         const token = req.cookies?.auth
-        console.log('checkAuth2')
+        console.log('checkAuth2: getIsAuth')
 
         let decodedUser
         try {
@@ -179,19 +186,22 @@ export const checkAuth2 = async (req, res) => {
             return
         }
 
-        const user = await UserModel.findByPk(decodedUser?.id)
+        const user = await UserModel.findByPk(decodedUser?.id, {
+            attributes: {exclude: ['password']},
+        })
 
         if (!user) {
             res.status(401).json({ message: 'Не авторизован' })
             return
         }
 
-        if (user.avatar !== decodedUser.avatar) {
-            console.log('miss')
-            const token = createToken(user.dataValues)
-            res.cookie('auth', token, options)
-        }
-        res.status(200).json({message: 'Ок'})
+        // if (user.avatar !== decodedUser.avatar) {
+        //     console.log('miss')
+        //     const token = createToken(user.dataValues)
+        //     res.cookie('auth', token, options)
+        // }
+        // res.status(200).json({message: 'Ок'})
+        res.status(200).json({user})
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Непредвиденная ошибка на сервере' })

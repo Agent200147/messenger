@@ -29,8 +29,7 @@ const Login: FC = () => {
         mode: 'onChange'
     })
 
-    const [loginUser, {isLoading: isLoadingLogin, error}] = useLoginMutation();
-    const serverError = (error as ServerErrorResponse)
+    const [loginUser, { isLoading: isLoadingLogin }] = useLoginMutation()
 
     const { register, handleSubmit, formState } = form
     const { errors } = formState;
@@ -39,18 +38,15 @@ const Login: FC = () => {
         try {
             await loginUser(data).unwrap()
             router.replace('/')
-            router.refresh()
-
-            // redirect('/')
-
         } catch (e) {
             console.log(e)
+            if(e && typeof e === 'object' && 'status' in e && e.status === 400 && 'data' in e && typeof e.data === 'string') {
+                setLoginError(e.data)
+                return
+            }
+            setLoginError('Непредвиденная ошибка на сервере')
         }
     }
-
-    useEffect(() => {
-        serverError?.data && setLoginError(serverError.data)
-    }, [serverError])
 
     return (
         <div className={styles.formWrapper}>
@@ -65,7 +61,6 @@ const Login: FC = () => {
                     <div className={styles.serverInternalError}>
                         {loginError}
                     </div>
-
                 }
                 <button type='submit'>Войти</button>
             </form>

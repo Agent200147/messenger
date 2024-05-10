@@ -6,8 +6,8 @@ import styles from "@/app/(auth)/auth.module.css";
 
 
 export default async function PublicLayout({children}: Readonly<{ children: React.ReactNode }>) {
-    const isAuth = await getIsAuth()
-    if (isAuth) redirect('/')
+    const isAuthUser = await getIsAuth()
+    if (isAuthUser && 'user' in isAuthUser) redirect('/')
 
     return (
         <div className={styles.wrapper}>

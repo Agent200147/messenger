@@ -68,7 +68,7 @@
     position: relative;
 }
 
-.serverError {
+.errorMessage {
     font-size: 1.4em;
     color: var(--red);
 }

@@ -23,6 +23,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     const currentChat = useSelector(selectCurrentChat)
     const isOnlineRecipient = onlineUsers.find(userId => userId === recipient.id)
     const { socket } = SocketFactory.create()
+
     const calendarStrings = {
         lastDay : '[вчера, в] LT',
         sameDay : '[сегодня, в] LT',
@@ -87,7 +88,6 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
                         )
                         : <div className={styles.lastOnline__skeleton}></div>
                 }
-
             </div>
         </div>
     )

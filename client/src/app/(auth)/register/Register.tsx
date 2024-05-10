@@ -5,16 +5,21 @@ import styles  from '@/app/(auth)/auth.module.css'
 import type { FC } from "react";
 
 import type { RegisterFormData } from "@/app/(auth)/register/RegisterSchema";
-import type { ServerErrorResponse, ZodErrorResponse } from "@/Models/ErrorResponse/errorResponseTypes";
+import type { ZodErrorResponse } from "@/Models/ErrorResponse/errorResponseTypes";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { registerFormSchema } from "@/app/(auth)/register/RegisterSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useRegisterMutation } from "@/api/auth/authApi";
 import { FormRegisterInput } from "@/components/FormInput/FormInput";
+import { registerFormSchema } from "@/app/(auth)/register/RegisterSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Register: FC = () => {
+    const [serverValidationErrors, setServerValidationErrors] = useState<string[]>()
+    const [registerError, setRegisterError] = useState('')
+
     const router = useRouter()
     const form = useForm<RegisterFormData>({
         defaultValues:{
@@ -28,22 +33,27 @@ const Register: FC = () => {
         mode: 'onChange'
     })
 
-    const [registerUser, {isLoading: isLoadingRegister, error}] = useRegisterMutation()
+    const [registerUser, { isLoading: isLoadingRegister }] = useRegisterMutation()
 
     const { register, handleSubmit, formState } = form
-    const { errors } = formState;
-    const serverValidationErrors = (error as ZodErrorResponse)?.data.issues
-    const serverInternalError = (error as ServerErrorResponse)
+    const { errors } = formState
 
     const onSubmit = async (data: RegisterFormData) => {
         const { confirmPassword, ...formData } = data
         try {
             await registerUser(formData).unwrap()
-            // redirect('/')
             router.replace('/')
 
         } catch (e) {
             console.log(e)
+
+            if(e && typeof e === 'object' && 'status' in e && e.status === 400 && 'data' in e && e.data && typeof e.data === 'object' && 'name' in e.data && e.data.name === "ZodError") {
+                setServerValidationErrors((e as ZodErrorResponse).data.errors)
+                return
+            }
+            else {
+                setRegisterError('Непредвиденная ошибка на сервере')
+            }
         }
     }
 
@@ -61,16 +71,19 @@ const Register: FC = () => {
                 {!!serverValidationErrors?.length &&
                     <div>
                         {serverValidationErrors.map((error, index) => {
-                            return <div key={index} className={styles.serverError}>{index + 1}. {error.message}</div>
+                            return <div key={index} className={styles.errorMessage}>{index + 1}) {error}</div>
                         })}
                     </div>
                 }
                 {
-                    serverInternalError?.status === 500 &&
-                    <div className={styles.serverInternalError}>
-                        {serverInternalError?.data}
-                    </div>
+                    registerError && <div className={styles.serverInternalError}>{registerError}</div>
                 }
+                {/*{*/}
+                {/*    serverInternalError?.status === 500 &&*/}
+                {/*    <div className={styles.serverInternalError}>*/}
+                {/*        {serverInternalError?.data}*/}
+                {/*    </div>*/}
+                {/*}*/}
                 <button type='submit'>Зарегистрироваться</button>
             </form>
         </div>

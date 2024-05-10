@@ -38,7 +38,6 @@ export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
                     </div>
                 </Link>
             </div>
-
         </>
     )
 }

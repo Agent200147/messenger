@@ -19,11 +19,11 @@ export default async function Home({ params } : Props) {
 
     const serverSideMessagesAndRecipient = await getChatMessagesAndRecipient(chatId)
     if (!serverSideMessagesAndRecipient || 'error' in serverSideMessagesAndRecipient)
-        redirect('/')
+        throw Error('ChatBox: Ошибка')
 
     if('unauthorized' in serverSideMessagesAndRecipient) {
         redirect('/login')
-
+        return
     }
 
     return (

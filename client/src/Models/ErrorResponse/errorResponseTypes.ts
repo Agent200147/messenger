@@ -2,7 +2,10 @@ import type { ZodError } from "zod";
 
 export type ZodErrorResponse = {
     status: number,
-    data: ZodError,
+    data: {
+        name: string,
+        errors: string[]
+    },
 }
 
 export type ServerErrorResponse = {
