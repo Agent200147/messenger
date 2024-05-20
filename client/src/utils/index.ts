@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
-import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
-import type { AuthenticatedUserType, UserInChatType } from "@/Models/User/userModel";
-import type { MessageType } from "@/Models/Message/messageModel";
 
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chat";
+import type { UserTypeWithoutPassword } from "@/Models/User/userModel";
+import type { MessageType } from "@/Models/Message/message";
 
 type FetchFailedType = {
     error: true,
@@ -11,13 +11,13 @@ type FetchFailedType = {
 }
 
 type CustomResponseType =  {
-    user: AuthenticatedUserType
+    user: UserTypeWithoutPassword
 }
 
 type ChatMessagesAndRecipientType = {
     unReadMessages: number,
-    messages:MessageType[],
-    recipients: UserInChatType[]
+    messages: MessageType[],
+    recipients: UserTypeWithoutPassword[]
 } | null
 
 const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailedType> => {
@@ -30,8 +30,9 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
                 Accept: 'application/json',
                 Cookie: `auth=${authCookie};`
             },
+            cache: 'no-cache'
         })
-        console.log('myFetch:', url, response.status)
+        // console.log('myFetch:', url, response.status)
         if (!response.ok)
         {
             if(response.status === 401) {
@@ -49,7 +50,7 @@ const myFetch = async <T>(url: string, method: string) : Promise<T | FetchFailed
 
 export async function getIsAuth() {
     const response = await myFetch<CustomResponseType>('/users/checkAuth', 'GET')
-    console.log('getIsAuth:', response)
+    // console.log('getIsAuth:', response)
     if ('unauthorized' in response) return false
     if ('error' in response) return response
 
@@ -72,7 +73,7 @@ export async function getUserChats() {
 }
 
 export async function getPotentialUsersToChat() {
-    return await myFetch<UserInChatType[]>('/chats/potential', 'GET')
+    return await myFetch<UserTypeWithoutPassword[]>('/chats/potential', 'GET')
 }
 
 export async function getChatMessagesAndRecipient(chatId: string) {

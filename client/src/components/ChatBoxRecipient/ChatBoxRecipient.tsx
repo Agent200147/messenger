@@ -1,8 +1,8 @@
 import styles from "./chatBoxRecipient.module.css";
 
 import type { FC } from 'react';
+import type { UserTypeWithoutPassword } from "@/Models/User/userModel";
 
-import type { UserInChatType } from "@/Models/User/userModel";
 
 import { useEffect, useState } from 'react';
 import Image from "next/image";
@@ -10,12 +10,11 @@ import avatarImg from "@/public/img/avatar.svg";
 import Moment from "react-moment";
 import { useSelector } from "react-redux";
 
-import { selectCurrentChat, selectOnlineUsers } from "@/store/slices/chatSlice";
-import { SocketOnEvent } from "@/store/middleware/socket.middleware";
+import { selectCurrentChat, selectOnlineUsers } from "@/store/slices/chat.slice";
 import SocketFactory from "@/socket/socket";
 
 type ChatBoxRecipientProps = {
-    recipient: UserInChatType
+    recipient: UserTypeWithoutPassword
 }
 const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     const [isTyping, setIsTyping] = useState(false)
@@ -34,7 +33,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
     useEffect(() => {
         if(!currentChat) return
         let timeout: ReturnType<typeof setTimeout>
-        socket.on(SocketOnEvent.GetTypingTrigger, (chatId) => {
+        socket.on('getTypingTrigger', (chatId) => {
             if (chatId !== currentChat.chatId) return
             setIsTyping(true)
             if (timeout) {
@@ -45,7 +44,7 @@ const ChatBoxRecipient: FC<ChatBoxRecipientProps> = ({ recipient }) => {
         })
 
         return () => {
-            socket.off(SocketOnEvent.GetTypingTrigger)
+            socket.off('getTypingTrigger')
             if (timeout) {
                 clearTimeout(timeout)
             }

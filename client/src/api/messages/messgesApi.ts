@@ -1,4 +1,4 @@
-import type { MessageType, NewMessageType } from "@/Models/Message/messageModel";
+import type { MessageType, NewMessageType } from "@/Models/Message/message";
 
 import { api } from "@/api/api";
 

@@ -1,16 +1,18 @@
 "use client";
+
 import { io, Socket } from "socket.io-client";
+import {ServerToClientEvents, ClientToServerEvents} from "../../../socket-types";
 
 export interface SocketInterface {
-    socket: Socket
+    socket: Socket<ServerToClientEvents, ClientToServerEvents>
 }
 
 class SocketConnection implements SocketInterface {
-    public socket: Socket;
+    public socket: Socket<ServerToClientEvents, ClientToServerEvents>
     public socketEndpoint = process.env.SOCKET_URL as string
     constructor() {
         this.socket = io(this.socketEndpoint)
-        console.log('second socket connected')
+        console.log('Socket connected!')
     }
 }
 

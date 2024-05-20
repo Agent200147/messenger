@@ -6,7 +6,7 @@ import {getIsAuth} from "@/utils";
 import {redirect} from "next/navigation";
 import {NextResponse} from "next/server";
 import {Routes} from "@/Routes/routes";
-import UserInitProvider from "@/providers/UserInit.provider";
+import UserSocketInitProvider from "@/providers/UserSocketInit.provider";
 
 export const metadata: Metadata = {
     title: "Auth",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function PrivateLayout({children}: Readonly<{ children: React.ReactNode }>) {
     const isAuth = await getIsAuth()
-
+    console.log('PrivateLayout')
     if(!isAuth) {
         redirect('/login')
         return
@@ -25,12 +25,12 @@ export default async function PrivateLayout({children}: Readonly<{ children: Rea
     }
 
     return (
-        <UserInitProvider user={isAuth.user}>
+        <UserSocketInitProvider user={isAuth.user}>
             <section className={styles.sectionWrapper}>
                 <AsideChats/>
                 {children}
                 <CanvasComponent/>
             </section>
-        </UserInitProvider>
+        </UserSocketInitProvider>
     )
 }

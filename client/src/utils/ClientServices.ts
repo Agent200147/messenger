@@ -1,5 +1,3 @@
-import {useEffect} from "react";
-
 type variableType = string | {} | Array<any> | null | undefined
 export const isEmpty = (variable: variableType): boolean => {
     if (typeof variable === 'string') return !variable
@@ -19,7 +17,6 @@ export const readChatMessages = async (chatId: number, recipientId: number) => {
             credentials: 'include',
         })
         return response.ok
-
     } catch (error) {
         return false
     }
@@ -44,5 +41,4 @@ export const setLastOnline = async () => {
             return false
         }
     }
-
 }

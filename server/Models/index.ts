@@ -1,48 +1,50 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import Sequelize from 'sequelize';
+import type { Sequelize, ModelStatic } from 'sequelize';
+
+import SequelizeObject, { Model } from 'sequelize';
+
 import sequelize from '../Sequelize/secuelize.js';
 
-import userModel from "./userModel.js";
-import chatModel from "./chatModel.js";
-import messageModel from "./messageModel.js";
-import userChatModel from "./user_ChatModel.js";
+import userModel, { IUserModel } from "./User.model.js";
+import chatModel, { IChatModel } from "./Chat.model.js";
+import messageModel, { IMessageModel } from "./Message.model.js";
+import userChatModel, { IUserChatModel } from "./UserChat.model.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export type AssociateType = {
+    associate: (models: DbModels) => void
+}
 
-const basename = path.basename(__filename);
-const db = {
-    sequelize: {},
-    Sequelize: {},
-};
+export type ModelStaticAssoc<T extends Model<any, any>> = ModelStatic<T> & AssociateType
 
+export type DbModels = {
+    UserModel: ModelStaticAssoc<IUserModel>,
+    ChatModel: ModelStaticAssoc<IChatModel>,
+    MessageModel: ModelStaticAssoc<IMessageModel>,
+    UserChatModel: ModelStaticAssoc<IUserChatModel>
+}
 
-// fs
-//     .readdirSync(__dirname)
-//     .filter(file => {
-//         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.ts');
-//     })
-//     .forEach(file => {
-//         console.log(file)
-//         // const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
-//         // db[model.name] = model
-//
-//         // const { default: model } = await import(path.join(__dirname, file))
-//         // db[model.name] = model
-//     });
+type dbType = {
+    sequelize: Sequelize,
+    sequelizeObject: typeof SequelizeObject,
+    models: DbModels
+}
 
-db[userModel.name] = userModel(sequelize, Sequelize.DataTypes)
-db[chatModel.name] = chatModel(sequelize, Sequelize.DataTypes)
-db[messageModel.name] = messageModel(sequelize, Sequelize.DataTypes)
-db[userChatModel.name] = userChatModel(sequelize, Sequelize.DataTypes)
-Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-        db[modelName].associate(db);
-    }
-});
+const db: dbType = {
+    sequelize: {} as Sequelize,
+    sequelizeObject: {} as typeof SequelizeObject,
+    models: {} as DbModels
+}
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+db.models.UserModel = userModel(sequelize, SequelizeObject.DataTypes)
+db.models.ChatModel = chatModel(sequelize, SequelizeObject.DataTypes)
+db.models.MessageModel = messageModel(sequelize, SequelizeObject.DataTypes)
+db.models.UserChatModel = userChatModel(sequelize, SequelizeObject.DataTypes)
+
+Object.keys(db.models).forEach((modelName) => {
+    const key = modelName as keyof DbModels
+    db.models[key].associate(db.models)
+})
+
+db.sequelize = sequelize
+db.sequelizeObject = SequelizeObject
+
 export default db

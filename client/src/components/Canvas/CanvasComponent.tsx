@@ -6,12 +6,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from 'next/navigation';
 
-import { selectCurrentChat } from "@/store/slices/chatSlice";
+import { selectCurrentChat } from "@/store/slices/chat.slice";
 import { useSetCanvasImageMutation } from "@/api/chats/chatsApi";
 import {toast, ToastContainer} from "react-toastify";
 import CustomToast from "@/components/CustomToast/CustomToast";
 import SocketFactory from "@/socket/socket";
-import {SocketEmitEvent, SocketOnEvent} from "@/store/middleware/socket.middleware";
 import ClearSvg from '../SvgComponents/Clear.svg';
 import cn from 'classnames';
 import Canvas, { ICanvas } from '@/canvas/canvas';
@@ -59,7 +58,6 @@ const CanvasComponent = () => {
         }
     }, [currentChatId])
 
-
     useLayoutEffect(() => {
         if (!canvasRef.current) {
             return
@@ -91,7 +89,7 @@ const CanvasComponent = () => {
 
         let isDrawing = false
 
-        if(currentChat?.canvasImage) {
+        if(currentChat.canvasImage) {
             const image = new Image()
             image.onload = function() {
                 commonCanvasRef.current?.drawImage(image)
@@ -101,7 +99,7 @@ const CanvasComponent = () => {
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
             image.src = `${process.env.SERVER_URL}/canvas/${currentChat.canvasImage}?v=${uniqueSuffix}`
         }
-        if(currentChat?.recipientInfo.canvasImage) {
+        if(currentChat.recipientInfo.canvasImage) {
             const tempCanvas = new Canvas({
                 width: canvasHtmlElement.width,
                 height: canvasHtmlElement.height,
@@ -116,12 +114,12 @@ const CanvasComponent = () => {
             }
             image.crossOrigin="anonymous"
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-            image.src = `${process.env.SERVER_URL}/canvas/${currentChat?.recipientInfo.canvasImage}?v=${uniqueSuffix}`
+            image.src = `${process.env.SERVER_URL}/canvas/${currentChat.recipientInfo.canvasImage}?v=${uniqueSuffix}`
 
             }
 
-        const throttledDispatch = throttle((x, y) => {
-            socket.emit(SocketEmitEvent.DrawToRecipient, { chatId: currentChat.chatId, recipientId, x, y })
+        const throttledDispatch = throttle((x: number, y: number) => {
+            if(recipientId) socket.emit('drawToRecipient', { chatId: currentChat.chatId, recipientId, x, y })
         }, 50)
 
         const drawHandler = (e: MouseEvent) => {
@@ -140,7 +138,7 @@ const CanvasComponent = () => {
                 const myCanvasImageData = myCanvasRef.current.toDataURL()
                 try {
                     await setCanvasImage({ image: myCanvasImageData, chatId: currentChat?.chatId }).unwrap()
-                    socket.emit(SocketEmitEvent.EndDrawToRecipient, {chatId: currentChat.chatId, recipientId})
+                    if(recipientId) socket.emit('endDrawToRecipient', { chatId: currentChat.chatId, recipientId })
                 } catch (error) {
                     toast.error(<CustomToast text={'Ошибка при загрузке изображения'} />)
                 }
@@ -168,7 +166,7 @@ const CanvasComponent = () => {
 
         let isDrawing = false
 
-        socket.on(SocketOnEvent.GetRecipientDraw, ({ chatId, x, y }) => {
+        socket.on('getRecipientDraw', ({ chatId, x, y }) => {
             if(chatId !== currentChat.chatId) return
 
             if(!isDrawing) {
@@ -180,12 +178,12 @@ const CanvasComponent = () => {
             recipientCanvasRef.current?.draw(x, y)
         })
 
-        socket.on(SocketOnEvent.GetEndRecipientDraw, (chatId) => {
+        socket.on('getEndDrawToRecipient', (chatId) => {
             if(chatId !== currentChat.chatId) return
             isDrawing = false
         })
 
-        socket.on(SocketOnEvent.GetClearRecipientCanvas, (chatId) => {
+        socket.on('getClearRecipientCanvas', (chatId) => {
             if(chatId !== currentChat.chatId) return
             recipientCanvasRef.current?.clear()
             commonCanvasRef.current?.clear()
@@ -195,9 +193,9 @@ const CanvasComponent = () => {
         })
 
         return () => {
-            socket.off(SocketOnEvent.GetRecipientDraw)
-            socket.off(SocketOnEvent.GetEndRecipientDraw)
-            socket.off(SocketOnEvent.GetClearRecipientCanvas)
+            socket.off('getRecipientDraw')
+            socket.off('getEndDrawToRecipient')
+            socket.off('getClearRecipientCanvas')
         }
     }, [currentChat?.chatId])
 
@@ -210,7 +208,7 @@ const CanvasComponent = () => {
             width: canvasHtmlElement.width,
             height: canvasHtmlElement.height,
         })
- 
+
         const emptyImageData = tempCanvas.toDataURL()
         try {
             await setCanvasImage({ image: emptyImageData, chatId: currentChat?.chatId }).unwrap()
@@ -218,11 +216,11 @@ const CanvasComponent = () => {
             toast.error(<CustomToast text={'Ошибка при очистке изображения'} />)
             return
         }
-        socket.emit(SocketEmitEvent.ClearCanvasToRecipient, {chatId: currentChat?.chatId, recipientId})
+        if(recipientId) socket.emit('clearCanvasToRecipient', { chatId: currentChat?.chatId, recipientId })
 
         commonCanvasRef.current?.clear()
         myCanvasRef.current?.clear()
-       
+
         if(recipientCanvasRef.current) commonCanvasRef.current?.drawImage(recipientCanvasRef.current?.getCanvas());
     }
 

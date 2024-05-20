@@ -2,26 +2,26 @@
 
 import styles from './potentialChats.module.css'
 import {useSelector} from "react-redux";
-import {selectOnlineUsers, selectUserChats} from "@/store/slices/chatSlice";
+import {selectOnlineUsers, selectUserChats} from "@/store/slices/chat.slice";
 import {isEmpty} from "@/utils/ClientServices";
 import Image from "next/image";
 import avatarImg from "@/public/img/avatar.svg";
 import {useCreateChatMutation} from "@/api/chats/chatsApi";
 import {toast} from "react-toastify";
 import CustomToast from "@/components/CustomToast/CustomToast";
-import {selectUser} from "@/store/slices/authSlice";
+import {selectUser} from "@/store/slices/auth.slice";
 import { useEffect, useLayoutEffect, useState } from "react";
 import type { FC } from "react";
 import {useRouter} from "next/navigation";
 import {Routes} from "@/Routes/routes";
 import SendButtonSvg from "@/components/SvgComponents/sendButton.svg";
 import Moment from "react-moment";
-import {ChatTypeWithFullInfo} from "@/Models/Chat/chatModel";
-import {UserInChatType} from "@/Models/User/userModel";
+import {ChatTypeWithFullInfo} from "@/Models/Chat/chat";
+import { UserTypeWithoutPassword } from "@/Models/User/userModel";
 
 type PotentialChatsProps = {
     userChatsServer: ChatTypeWithFullInfo[],
-    potentialChats: UserInChatType[]
+    potentialChats: UserTypeWithoutPassword[]
 }
 
 const PotentialChats: FC<PotentialChatsProps> = ({ userChatsServer, potentialChats }) => {

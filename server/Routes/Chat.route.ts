@@ -1,12 +1,13 @@
 import { Router } from 'express';
+
 import {
     createChat,
     findUserChatsAndRecipients,
     readChatMessages,
     findUserPotentialUsersToChat,
     saveCanvas
-} from "../Controllers/ChatController.js";
-import { checkAuth } from "../Controllers/UserController.js";
+} from "../Controllers/Chat.controller.js";
+import { checkAuth } from "../Middleware/auth.middleware.js";
 
 const router = Router()
 

@@ -2,11 +2,11 @@
 
 import { AuthLinks, NonAuthLinks } from "@/components/Links/Links";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUser, setUser} from "@/store/slices/authSlice";
+import {selectUser, setUser} from "@/store/slices/auth.slice";
 import {useEffect} from "react";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
+import {UserTypeWithoutPassword} from "@/Models/User/userModel";
 
-const Nav = ({ user }: { user: AuthenticatedUserType | false  }) => {
+const Nav = ({ user }: { user: UserTypeWithoutPassword | false  }) => {
     const userFromStore = useSelector(selectUser)
 
     // useEffect(() => {
@@ -17,7 +17,7 @@ const Nav = ({ user }: { user: AuthenticatedUserType | false  }) => {
         <>
             {
                 user || userFromStore
-                    ? <AuthLinks user={!userFromStore ? user as AuthenticatedUserType : userFromStore}/>
+                    ? <AuthLinks user={!userFromStore ? user as UserTypeWithoutPassword : userFromStore}/>
                     : <NonAuthLinks/>
             }
         </>

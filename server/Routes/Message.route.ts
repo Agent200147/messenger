@@ -1,10 +1,11 @@
 import { Router } from 'express';
+
 import {
     createMessage,
     getChatAdditionalMessages,
     getChatMessagesAndRecipient
-} from "../Controllers/MessageController.js";
-import { checkAuth } from "../Controllers/UserController.js";
+} from "../Controllers/Message.controller.js";
+import { checkAuth } from "../Middleware/auth.middleware.js";
 
 const router = Router()
 

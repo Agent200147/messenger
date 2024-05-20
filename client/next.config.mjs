@@ -6,9 +6,10 @@ const nextConfig = {
     //         fullUrl: true
     //     }
     // },
+
     // experimental: {
     //     staleTimes: {
-    //         dynamic: 10,
+    //         dynamic: 0,
     //         static: 60
     //     }
     // },
@@ -35,6 +36,6 @@ const nextConfig = {
             },
         ],
     },
-};
+}
 
-export default nextConfig;
+export default nextConfig

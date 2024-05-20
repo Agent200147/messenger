@@ -6,7 +6,8 @@ import { Middleware } from "redux";
 import {
     connectionEstablished,
     initSocket,
-    connectionLost, disconnectSocket,
+    connectionLost,
+    disconnectSocket,
 } from "@/store/slices/socket.slice";
 import SocketFactory from "@/socket/socket";
 import {
@@ -20,50 +21,49 @@ import {
     setCurrentChat,
     setLastMessage,
     setOnlineUsers,
-} from "@/store/slices/chatSlice";
+} from "@/store/slices/chat.slice";
 import { messagesApi } from "@/api/messages/messgesApi";
-import { addMessage } from "@/store/slices/messageSlice";
+import { addMessage } from "@/store/slices/message.slice";
 import { chatApi } from "@/api/chats/chatsApi";
 import { readChatMessages, setLastOnline } from "@/utils/ClientServices";
 
-enum SocketNativeOnEvent {
-    Connect = "connect",
-    Disconnect = "disconnect",
-    Error = "err",
-}
+// enum SocketNativeOnEvent {
+//     Connect = "connect",
+//     Disconnect = "disconnect",
+//     Error = "err",
+// }
 
-export enum SocketEmitEvent {
-    NewUser = 'newUser',
-    SendMessage = 'send-message',
-    ReadMessages = 'read-messages',
-    CreateNewChat = 'create-new-chat',
-    RemoveOnlineUser = 'remove-online-user',
-    DrawToRecipient = 'draw-to-recipient',
-    EndDrawToRecipient = 'end-draw-to-recipient',
-    TypingTrigger = 'typing-trigger',
-    ClearCanvasToRecipient = 'clear-canvas',
-}
-
-export enum SocketOnEvent {
-    OnlineUsers = 'onlineUsers',
-    GetMessage = 'get-message',
-    MarkReadMessages = 'mark-read-messages',
-    GetNewChat = 'get-new-chat',
-    GetRemoveOnlineUser = 'get-remove-online-user',
-    GetRecipientDraw = 'get-recipient-draw',
-    GetEndRecipientDraw = 'get-end-recipient-draw',
-    GetTypingTrigger = 'get-typing-trigger',
-    GetClearRecipientCanvas = 'get-clear-canvas',
-}
+// export enum SocketEmitEvent {
+//     NewUser = 'newUser',
+//     SendMessage = 'send-message',
+//     ReadMessages = 'readMessages',
+//     CreateNewChat = 'create-new-chat',
+//     RemoveOnlineUser = 'remove-online-user',
+//     DrawToRecipient = 'draw-to-recipient',
+//     EndDrawToRecipient = 'end-draw-to-recipient',
+//     TypingTrigger = 'typing-trigger',
+//     ClearCanvasToRecipient = 'clear-canvas',
+// }
+//
+// export enum SocketOnEvent {
+//     OnlineUsers = 'onlineUsers',
+//     GetMessage = 'get-message',
+//     MarkReadMessages = 'mark-read-messages',
+//     GetNewChat = 'get-new-chat',
+//     GetRemoveOnlineUser = 'get-remove-online-user',
+//     GetRecipientDraw = 'get-recipient-draw',
+//     GetEndRecipientDraw = 'get-end-recipient-draw',
+//     GetTypingTrigger = 'get-typing-trigger',
+//     GetClearRecipientCanvas = 'get-clear-canvas',
+// }
 
 const socketMiddleware: Middleware = (store) => {
-    let socket: SocketInterface
-
+    let socketFactory: SocketInterface
     const markChatMessagesAsReadAndEmit = async (currentChatId: number, recipientId: number) => {
         const response = await readChatMessages(currentChatId, recipientId)
         if (response) {
             store.dispatch(markRecipientMessagesAsRead(currentChatId))
-            socket.socket.emit(SocketEmitEvent.ReadMessages, { chatId: Number(currentChatId), recipientId })
+            socketFactory.socket.emit('readMessages', { chatId: currentChatId, recipientId })
         }
     }
 
@@ -71,8 +71,9 @@ const socketMiddleware: Middleware = (store) => {
         const getState = () => store.getState() as RootState
 
         if (initSocket.match(action)) {
-            if (!socket && typeof window !== "undefined") {
-                socket = SocketFactory.create()
+            if (!socketFactory && typeof window !== "undefined") {
+                socketFactory = SocketFactory.create()
+                const { socket } = socketFactory
 
                 const currentChat = getState().chats.currentChat
                 const currentChatId = currentChat?.chatId
@@ -83,23 +84,25 @@ const socketMiddleware: Middleware = (store) => {
                     markChatMessagesAsReadAndEmit(currentChatId, recipientId)
                 }
 
-                socket.socket.on(SocketNativeOnEvent.Connect, () => {
+                socket.on('connect', () => {
                     store.dispatch(connectionEstablished())
                 })
 
-                socket.socket.on(SocketNativeOnEvent.Error, (message) => {
+                socket.on('connect_error', (message) => {
                     console.error(message)
                 })
 
-                socket.socket.on(SocketNativeOnEvent.Disconnect, (reason) => {
+                socket.on('disconnect', (reason) => {
                     store.dispatch(connectionLost())
+                    console.log(reason)
                 })
 
-                socket.socket.on(SocketOnEvent.OnlineUsers, (onlineUsers) => {
+                socket.on('getOnlineUsers', (onlineUsers) => {
                     store.dispatch(setOnlineUsers(onlineUsers))
+                    console.log('getOnlineUsers:', onlineUsers)
                 })
 
-                socket.socket.on(SocketOnEvent.GetMessage, (response) => {
+                socket.on('getMessage', (response) => {
                     const message = response.message
                     const currentChat = getState().chats.currentChat
                     const currentChatId = currentChat?.chatId
@@ -117,15 +120,15 @@ const socketMiddleware: Middleware = (store) => {
 
                 })
 
-                socket.socket.on(SocketOnEvent.MarkReadMessages, (chatId) => {
+                socket.on('getReadMessages', (chatId) => {
                     store.dispatch(markChatMessagesAsRead(chatId))
                 })
 
-                socket.socket.on(SocketOnEvent.GetNewChat, (newChat) => {
+                socket.on('getNewChat', (newChat) => {
                     store.dispatch(addNewChat(newChat))
                 })
 
-                socket.socket.on(SocketOnEvent.GetRemoveOnlineUser, (userId) => {
+                socket.on('getRemoveOnlineUser', (userId) => {
                     console.log('SocketOnEvent.GetRemoveOnlineUser', userId)
                     store.dispatch(removeOnlineUser(userId))
                 })
@@ -151,12 +154,11 @@ const socketMiddleware: Middleware = (store) => {
             }
         }
 
-        if (addNewOnlineUser.match(action) && socket) {
-            socket.socket.emit(SocketEmitEvent.NewUser, action.payload)
+        if (addNewOnlineUser.match(action) && socketFactory) {
+            socketFactory.socket.emit('newUser', action.payload)
         }
 
-        if(setCurrentChat.match(action) && socket) {
-            // console.log(action.payload)
+        if(setCurrentChat.match(action) && socketFactory) {
             const currentChat = action.payload
             const currentChatId = currentChat?.chatId
             const recipientId = currentChat?.recipientInfo.user.id
@@ -167,22 +169,23 @@ const socketMiddleware: Middleware = (store) => {
             markChatMessagesAsReadAndEmit(currentChatId, recipientId)
         }
 
-        if(messagesApi.endpoints.sendMessage.matchFulfilled(action)) {
+        if(messagesApi.endpoints.sendMessage.matchFulfilled(action) && socketFactory) {
             const recipientId = getState().chats.currentChat?.recipientInfo.user.id
             if(!recipientId) return
             store.dispatch(addUnreadMessageToCurrentChat())
-            socket.socket.emit(SocketEmitEvent.SendMessage, {message: action.payload, recipientId})
+            socketFactory.socket.emit('sendMessage', { message: action.payload, recipientId })
         }
 
-        if(chatApi.endpoints.createChat.matchFulfilled(action)) {
+        if(chatApi.endpoints.createChat.matchFulfilled(action) && socketFactory) {
             const newChat = action.payload
             const recipientId = newChat.recipientInfo.user.id
             const user = getState().auth.user
-            const updatedChat = { ...newChat, recipientInfo: { ...newChat.recipientInfo, user }}
-            console.log('SocketEmitEvent.CreateNewChat', { newChat: updatedChat, recipientId })
 
             if(!recipientId || !user) return
-            socket.socket.emit(SocketEmitEvent.CreateNewChat, { newChat: updatedChat, recipientId })
+
+            const updatedChat = { ...newChat, recipientInfo: { ...newChat.recipientInfo, user }}
+
+            socketFactory.socket.emit('createNewChat', { newChat: updatedChat, recipientId })
         }
 
         // if(drawToRecipient.match(action)) {
@@ -205,14 +208,13 @@ const socketMiddleware: Middleware = (store) => {
         // }
 
 
-        if(disconnectSocket.match(action) && socket) {
+        if(disconnectSocket.match(action) && socketFactory) {
             setLastOnline()
             const user = getState().auth.user
-            if (user) socket.socket.emit(SocketEmitEvent.RemoveOnlineUser, user.id)
-            for (let socketOnEventKey in SocketOnEvent) {
-                socket.socket.off(socketOnEventKey)
-            }
-            socket.socket.disconnect()
+            if (user) socketFactory.socket.emit('removeOnlineUser', user.id)
+            console.log('disconnectSocket')
+            socketFactory.socket.off()
+            socketFactory.socket.disconnect()
         }
         next(action)
     }

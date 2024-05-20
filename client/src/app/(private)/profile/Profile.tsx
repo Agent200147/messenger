@@ -3,13 +3,13 @@
 import styles from './profile.module.css'
 
 import {useSelector} from "react-redux";
-import {selectUser} from "@/store/slices/authSlice";
+import {selectUser} from "@/store/slices/auth.slice";
 import {useRef, useState} from "react";
 import type { ChangeEvent, FC } from "react";
 import type { FormEvent } from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
+import {UserTypeWithoutPassword} from "@/Models/User/userModel";
 import UploadSvg from "@/components/SvgComponents/UploadSvg";
 import cn from "classnames";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
@@ -22,17 +22,20 @@ import avatarImg from "@/public/img/avatar.svg";
 import {revalidatePath} from "next/cache";
 
 type ProfilePageProps = {
-    user: AuthenticatedUserType,
+    userFromServer: UserTypeWithoutPassword,
     // cancelHandler: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 
-const Profile: FC<ProfilePageProps> = ({ user }) => {
-    // const user = useSelector(selectUser)
-    const inputRef = useRef<HTMLInputElement>(null);
+const Profile: FC<ProfilePageProps> = ({ userFromServer }) => {
+    const userFromStore = useSelector(selectUser)
+
+    const user = userFromStore || userFromServer
+
+    const inputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
-    const [selectedFile, setSelectedFile] = useState<File>();
-    const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>('');
-    const [error, setError] = useState('');
+    const [selectedFile, setSelectedFile] = useState<File>()
+    const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>('')
+    const [error, setError] = useState('')
 
     const [ upload ] = useUploadAvatarMutation()
     // console.log('error', error)
@@ -45,7 +48,7 @@ const Profile: FC<ProfilePageProps> = ({ user }) => {
 
             try {
                 await upload(formData).unwrap()
-                router.refresh()
+                // router.refresh()
                 setImagePreview(null)
                 toast.success(<CustomToast text="Фото профиля успешно обновлено" />)
             } catch (error: any) {

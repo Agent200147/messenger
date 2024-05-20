@@ -1,7 +1,7 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 import { chatApi } from '@/api/chats/chatsApi'
 import {listenerMiddleware} from "@/middleware/auth"
-import {addMessage} from "@/store/slices/messageSlice"
+import {addMessage} from "@/store/slices/message.slice"
 import {RootState} from "@/store/store";
 
 listenerMiddleware.startListening({

@@ -1,5 +1,4 @@
 import type {Metadata} from "next";
-import PublicProvider from "@/providers/PublicProvider";
 import {redirect} from "next/navigation";
 import {getIsAuth} from "@/utils";
 import styles from "@/app/(auth)/auth.module.css";

@@ -1,8 +1,8 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { api } from "@/api/api";
-import auth, {setUser} from '@/store/slices/authSlice'
-import chats from '@/store/slices/chatSlice'
-import messages from '@/store/slices/messageSlice'
+import auth, {setUser} from '@/store/slices/auth.slice'
+import chats from '@/store/slices/chat.slice'
+import messages from '@/store/slices/message.slice'
 import socket, {initSocket} from '@/store/slices/socket.slice'
 import { listenerMiddleware } from "@/middleware/auth";
 import socketMiddleware from "@/store/middleware/socket.middleware";

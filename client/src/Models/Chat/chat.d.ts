@@ -1,6 +1,6 @@
-import type { UserInChatType } from "@/Models/User/userModel";
-import type { MessageType } from "@/Models/Message/messageModel";
-import {Nullable} from "@/utils/typeUtils";
+import type { MessageType } from "@/Models/Message/message";
+import type { Nullable } from "@/utils/typeUtils";
+import type { UserTypeWithoutPassword } from "@/Models/User/userModel";
 
 // export type ChatType = {
 //     id: number,
@@ -18,7 +18,7 @@ export type ChatTypeWithFullInfo =  {
     recipientInfo: {
         unReadMessages: number,
         canvasImage: Nullable<string>,
-        user: UserInChatType
+        user: UserTypeWithoutPassword
     },
     lastMessage: Nullable<MessageType>
 }

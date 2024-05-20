@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import {type AuthenticatedUserType, type UserLoginType, type UserRegisterType, type UserType} from "@/Models/User/userModel";
+import {type UserTypeWithoutPassword, type UserLoginType, type UserRegisterType, type UserType} from "@/Models/User/userModel";
 
 export const userApi = api.injectEndpoints({
     endpoints: (builder) => ({

@@ -1,7 +1,7 @@
 'use client';
 
 import type { FC } from "react";
-import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chat";
 
 import styles from "@/components/ChatItem/chatItem.module.css";
 
@@ -12,11 +12,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 import avatarImg from "@/public/img/avatar.svg";
-import { selectOnlineUsers, setCurrentChat } from "@/store/slices/chatSlice";
+import { selectOnlineUsers, setCurrentChat } from "@/store/slices/chat.slice";
 import ReadCheckMarkSvg from "@/components/SvgComponents/ReadCheckMarkSvg";
-import { setNewMessage } from "@/store/slices/messageSlice"
 import { Routes } from "@/Routes/routes"
-import {useParams} from "next/navigation";
+import {log} from "util";
 
 type ChatItemProps = {
     closed: boolean,
@@ -36,7 +35,6 @@ const ChatItem: FC<ChatItemProps> = ({ closed, chat, isActiveChat }) => {
     useLayoutEffect(() => {
         if (isActiveChat) {
             dispatch(setCurrentChat(chat))
-            dispatch(setNewMessage(null))
         }
     }, [isActiveChat])
 
@@ -85,9 +83,6 @@ const ChatItem: FC<ChatItemProps> = ({ closed, chat, isActiveChat }) => {
             }
         </Link>
     )
-};
+}
 
-export default memo(ChatItem);
-
-//
-// 'use server'
+export default memo(ChatItem)

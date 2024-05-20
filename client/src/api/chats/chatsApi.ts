@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chat";
 export const chatApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getChats: builder.mutation<ChatTypeWithFullInfo[], number>({

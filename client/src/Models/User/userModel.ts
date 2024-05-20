@@ -9,7 +9,6 @@ export type UserType = {
     createdAt: string
 }
 
-export type AuthenticatedUserType = Omit<UserType, 'password'> & { token: string}
+export type UserTypeWithoutPassword = Omit<UserType, 'password'>
 export type UserLoginType = Pick<UserType, 'email' | 'password'>
 export type UserRegisterType = Omit<UserType, 'id' | 'avatar' | 'lastOnline' | 'createdAt'>
-export type UserInChatType = Omit<UserType, 'password'>

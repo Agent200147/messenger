@@ -4,10 +4,10 @@ import styles from './chats.module.css'
 
 import { useEffect, useState} from "react";
 import type { FC } from "react";
-import type { ChatTypeWithFullInfo } from "@/Models/Chat/chatModel";
+import type { ChatTypeWithFullInfo } from "@/Models/Chat/chat";
 import ChatItem from "@/components/ChatItem/ChatItem";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserChats, setChats, setCurrentChat} from "@/store/slices/chatSlice";
+import {selectUserChats, setChats, setCurrentChat} from "@/store/slices/chat.slice";
 import SearchInput from "@/components/SearchInput/SearchInput";
 import {useParams} from "next/navigation";
 import cn from 'classnames';

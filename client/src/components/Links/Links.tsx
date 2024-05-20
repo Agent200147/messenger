@@ -2,10 +2,10 @@
 import styles from './links.module.css'
 import Link from "next/link";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUser, setUser} from "@/store/slices/authSlice";
+import {selectUser, setUser} from "@/store/slices/auth.slice";
 import {cookies} from "next/headers";
 import {useEffect, useLayoutEffect} from "react";
-import {AuthenticatedUserType} from "@/Models/User/userModel";
+import {UserTypeWithoutPassword} from "@/Models/User/userModel";
 import {isEmpty} from "@/utils/ClientServices";
 import {usePathname, useRouter} from "next/navigation";
 import Image from "next/image";
@@ -13,7 +13,7 @@ import avatarImg from "@/public/img/avatar.svg";
 import {Routes} from "@/Routes/routes";
 import cn from "classnames";
 
-export const AuthLinks = ({user}: { user: AuthenticatedUserType }) => {
+export const AuthLinks = ({user}: { user: UserTypeWithoutPassword }) => {
     const router = useRouter()
     const pathname = usePathname()
     // console.log('AuthLinks render')

@@ -5,7 +5,10 @@ import {disconnectSocket} from "@/store/slices/socket.slice";
 
 export const useSetLastOnlineOnUnload = () => {
     const dispatch = useDispatch()
-    const handleUnload = () => dispatch(disconnectSocket())
+    const handleUnload = () =>  {
+        dispatch(disconnectSocket())
+        // console.log('disconnectSocket')
+    }
     useEffect(() => {
         // const handleUnload = async () => {
         //     await setLastOnline();
@@ -17,6 +20,6 @@ export const useSetLastOnlineOnUnload = () => {
         return () => {
             window.removeEventListener('beforeunload', handleUnload);
             // window.removeEventListener('unload', handleUnload);
-        };
-    }, []);
+        }
+    }, [])
 }

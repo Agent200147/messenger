@@ -1,0 +1,6 @@
+export const ERROR_UNAUTHORIZED = 'Не авторизован'
+export const ERROR_SERVER_ERROR = 'Непредвиденная ошибка на сервере'
+export const ERROR_INVALID_CREDENTIALS = 'Неверный логин или пароль'
+export const ERROR_INVALID_OPTIONS = 'Неверно указаны параметры'
+export const ERROR_CHAT_NOT_FOUND = 'Чат не найден'
+export const ERROR_USER_EXIST = 'Пользователь уже существует'

@@ -2,17 +2,18 @@ import styles from './messageInput.module.css'
 import {KeyboardEventHandler, useEffect, useRef, useState} from "react";
 import type { FC, ChangeEvent } from "react";
 import SendButton from "@/components/MessageInput/SendButton";
-import {useDispatch, useSelector} from "react-redux";
-import {selectUser} from "@/store/slices/authSlice";
+import { useSelector } from "react-redux";
+import {selectUser} from "@/store/slices/auth.slice";
 import {useSendMessageMutation} from "@/api/messages/messgesApi";
-import { selectCurrentChat } from "@/store/slices/chatSlice";
-import {SocketEmitEvent} from "@/store/middleware/socket.middleware";
+import { selectCurrentChat } from "@/store/slices/chat.slice";
 import SocketFactory from "@/socket/socket";
 import {toast} from "react-toastify";
 import CustomToast from "@/components/CustomToast/CustomToast";
+
 type MessageInputProps = {
     currentChatId: string,
 }
+
 const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
     const [messageText, setMessageText] = useState<string>('')
     const [isTextAreaScroll, setIsTextAreaScroll] = useState<boolean>(false)
@@ -45,12 +46,12 @@ const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
     useEffect(() => {
         if(!textAreaRef.current) return
         lineHeight.current = textAreaRef.current.offsetHeight
-    }, [textAreaRef.current]);
+    }, [textAreaRef.current])
 
 
     useEffect(() => {
         if(!textAreaDivRef.current || !textAreaRef.current) return
-        if(messageText && recipientId) socket.emit(SocketEmitEvent.TypingTrigger, {chatId: currentChat.chatId, recipientId})
+        if(messageText && recipientId) socket.emit('typingTrigger', { chatId: currentChat.chatId, recipientId })
 
         const textArea = textAreaRef.current
         textAreaDivRef.current.style.width = textArea.clientWidth + 'px'
@@ -98,6 +99,7 @@ const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
         try {
             await sendTextMessage(message).unwrap()
         } catch (e) {
+            console.log(e)
             toast.error(<CustomToast text={'Ошибка отправки сообщения'} />)
             return
         }
@@ -114,7 +116,7 @@ const MessageInput: FC<MessageInputProps> = ({ currentChatId }) => {
             <textarea className={isTextAreaScroll ? styles.scroll : ''} ref={textAreaRef} rows={1} value={messageText} onKeyDown={handleKeyPress} onChange={(e) => onChangeMessageInput(e)} placeholder='Напишите сообщение...'/>
             <SendButton onClick={sendMessage} active={active} />
         </div>
-    );
-};
+    )
+}
 
 export default MessageInput;

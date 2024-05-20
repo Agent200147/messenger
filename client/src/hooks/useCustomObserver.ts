@@ -1,9 +1,9 @@
 import {useEffect, useLayoutEffect, useRef} from 'react';
 import type { RefObject } from 'react';
+import {debounce} from "@/utils/debounce";
 
 const UseCustomObserver = (elementRef: RefObject<HTMLDivElement>, callback: () => void) => {
     const observer = useRef<IntersectionObserver | null>(null)
-
     useEffect(() => {
         let timeout: ReturnType<typeof setTimeout>
         observer.current = new IntersectionObserver((entries) => {
@@ -12,9 +12,8 @@ const UseCustomObserver = (elementRef: RefObject<HTMLDivElement>, callback: () =
                     timeout = setTimeout(() => {
                         callback()
                     }, 200)
-                    // callback()
                 }
-            });
+            })
         }, { threshold: 0.1})
 
         if (elementRef.current) {
@@ -26,11 +25,11 @@ const UseCustomObserver = (elementRef: RefObject<HTMLDivElement>, callback: () =
                 clearTimeout(timeout)
                 observer.current.disconnect()
             }
-        };
+        }
     }, [elementRef, callback])
 }
 
-export default UseCustomObserver;
+export default UseCustomObserver
 
 
 export const useCustomObservers = (elementRefs: HTMLDivElement[], callback: () => void) => {

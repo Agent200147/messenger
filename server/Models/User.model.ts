@@ -1,71 +1,73 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../Sequelize/secuelize.js';
+import type { CreationOptional, InferAttributes, InferCreationAttributes, Sequelize } from "sequelize";
+
+import type { ModelStaticAssoc } from "./index.js";
+import type { Nullable } from "../Controllers/types.js";
+
+import SequelizeObject, { Model } from "sequelize";
 import { z } from "zod";
 import validator from "validator";
-import Chat from "./chatModel.js";
-import User_Chat from "./user_ChatModel.js";
 
+export interface IUserModel extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>> {
+    id: CreationOptional<number>,
+    email: string,
+    name: string,
+    secondName: string,
+    avatar: CreationOptional<Nullable<string>>,
+    password: string,
+    lastOnline: CreationOptional<string>,
+}
 
+const UserModel = (sequelize: Sequelize, DataTypes: typeof SequelizeObject.DataTypes) => {
+    const User = sequelize.define<IUserModel>('user', {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true,
+        },
 
-// const userCreate = async (username) => {
-//     await User.create({ username: username });
-// }
-//
-// const userGetAll = async (username) => {
-//     return await User.findAll();
-// }
-
-// module.exports = User
-
-const UserModel = (sequelize, DataTypes) => {
-    const User = sequelize.define('user', {
         email: {
             type: DataTypes.STRING,
-            required: true,
             allowNull: false,
-            minLength: 4,
-            unique: true
+            unique: true,
+            validate: {
+                len: [4, 50]
+            },
         },
 
         name: {
             type: DataTypes.STRING,
-            required: true,
             allowNull: false
         },
 
         secondName: {
             type: DataTypes.STRING,
-            required: true,
             allowNull: false
         },
 
         avatar: {
             type: DataTypes.STRING,
-            required: false,
             allowNull: true
         },
 
         password: {
             type: DataTypes.STRING,
-            required: true,
             allowNull: false,
-            minLength: 8,
         },
 
         lastOnline: DataTypes.DATE,
     }, {
-        sequelize,
         createdAt: true,
         updatedAt: false
-    })
+    }) as ModelStaticAssoc<IUserModel>
+
     User.associate = (models) => {
         User.hasMany(models.MessageModel, {
             foreignKey: 'senderId'
         })
-        User.hasMany(models.User_ChatModel)
+        User.hasMany(models.UserChatModel)
         User.belongsToMany(models.ChatModel, { through: 'user_chat', onDelete: 'CASCADE' })
     }
-    return User;
+    return User
 }
 
 export default UserModel
